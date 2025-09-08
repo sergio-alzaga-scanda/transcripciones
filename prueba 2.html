@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Proceso de Mantenimiento Preventivo de Equipos de Cómputo</title>
+
+    <style>
+
+        body {
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            line-height: 1.6;
+
+            margin: 40px;
+
+            color: #333;
+
+            background-color: #f8f9fa;
+
+        }
+
+        .container {
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 10px;
+
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+
+        }
+
+        h1 {
+
+            color: #2c3e50;
+
+            text-align: center;
+
+            border-bottom: 3px solid #3498db;
+
+            padding-bottom: 20px;
+
+            margin-bottom: 30px;
+
+        }
+
+        h2 {
+
+            color: #2980b9;
+
+            border-left: 4px solid #3498db;
+
+            padding-left: 15px;
+
+            margin-top: 30px;
+
+            margin-bottom: 15px;
+
+        }
+
+        h3 {
+
+            color: #34495e;
+
+            margin-top: 25px;
+
+            margin-bottom: 10px;
+
+        }
+
+        h4 {
+
+            color: #7f8c8d;
+
+            margin-top: 20px;
+
+            margin-bottom: 8px;
+
+        }
+
+        .header-info {
+
+            background: #ecf0f1;
+
+            padding: 20px;
+
+            border-radius: 8px;
+
+            margin-bottom: 30px;
+
+        }
+
+        .process-step {
+
+            background: #f8f9fa;
+
+            padding: 15px;
+
+            margin: 10px 0;
+
+            border-left: 4px solid #27ae60;
+
+            border-radius: 5px;
+
+        }
+
+        .risk-table, .metrics-table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin: 20px 0;
+
+        }
+
+        .risk-table th, .risk-table td,
+
+        .metrics-table th, .metrics-table td {
+
+            border: 1px solid #bdc3c7;
+
+            padding: 12px;
+
+            text-align: left;
+
+        }
+
+        .risk-table th, .metrics-table th {
+
+            background-color: #3498db;
+
+            color: white;
+
+            font-weight: bold;
+
+        }
+
+        .risk-table tr:nth-child(even),
+
+        .metrics-table tr:nth-child(even) {
+
+            background-color: #f2f2f2;
+
+        }
+
+        .improvement-box {
+
+            background: #e8f5e8;
+
+            border: 1px solid #27ae60;
+
+            padding: 20px;
+
+            border-radius: 8px;
+
+            margin: 15px 0;
+
+        }
+
+        .warning-box {
+
+            background: #fff3cd;
+
+            border: 1px solid #ffc107;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            margin: 15px 0;
+
+        }
+
+        .info-box {
+
+            background: #d1ecf1;
+
+            border: 1px solid #17a2b8;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            margin: 15px 0;
+
+        }
+
+        .emoji {
+
+            font-size: 1.2em;
+
+            margin-right: 8px;
+
+        }
+
+        ul, ol {
+
+            margin: 10px 0;
+
+            padding-left: 25px;
+
+        }
+
+        li {
+
+            margin: 5px 0;
+
+        }
+
+        .footer {
+
+            text-align: center;
+
+            margin-top: 40px;
+
+            padding-top: 20px;
+
+            border-top: 1px solid #bdc3c7;
+
+            color: #7f8c8d;
+
+        }
+
+        .phase-title {
+
+            background: #3498db;
+
+            color: white;
+
+            padding: 10px 15px;
+
+            border-radius: 5px;
+
+            margin: 20px 0 10px 0;
+
+            font-weight: bold;
+
+        }
+
+        .code-block {
+
+            background: #2c3e50;
+
+            color: #ecf0f1;
+
+            padding: 15px;
+
+            border-radius: 5px;
+
+            font-family: 'Courier New', monospace;
+
+            margin: 15px 0;
+
+            overflow-x: auto;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1><span class="emoji">🔧</span>PROCESO DE MANTENIMIENTO PREVENTIVO DE EQUIPOS DE CÓMPUTO</h1>
+
+       
+
+        <div class="header-info">
+
+            <p><strong>Fecha de Documentación:</strong> <?php echo date('d/m/Y'); ?></p>
+
+            <p><strong>Versión:</strong> 1.0</p>
+
+            <p><strong>Documentado por:</strong> Agente Virtual de Procesos</p>
+
+        </div>
+
+ 
+
+        <h2><span class="emoji">🎯</span>1. Nombre del Proceso</h2>
+
+        <p><strong>Mantenimiento Preventivo de Equipos de Cómputo</strong></p>
+
+ 
+
+        <h2><span class="emoji">🎯</span>2. Objetivo del Proceso</h2>
+
+        <p>Realizar mantenimiento preventivo integral a equipos de cómputo (computadores, impresoras, servidores) para garantizar su óptimo funcionamiento, prolongar su vida útil y prevenir fallas que puedan afectar la productividad de los usuarios finales.</p>
+
+ 
+
+        <h2><span class="emoji">🏢</span>3. Área o Unidad Responsable</h2>
+
+        <p><strong>Área de Servicios Técnicos</strong><br>
+
+        Supervisor: Supervisor de Servicios Técnicos<br>
+
+        Ejecutores: Técnicos e Ingenieros de Campo</p>
+
+ 
+
+        <h2><span class="emoji">👥</span>4. Público Objetivo o Usuario del Proceso</h2>
+
+        <ul>
+
+            <li><strong>Clientes corporativos</strong> con contratos de mantenimiento</li>
+
+            <li><strong>Usuarios finales</strong> de los equipos en las organizaciones cliente</li>
+
+            <li><strong>Administradores de TI</strong> de las empresas cliente</li>
+
+        </ul>
+
+ 
+
+        <h2><span class="emoji">📥</span>5. Entradas del Proceso</h2>
+
+        <ul>
+
+            <li>
+
+        <ul>
+
+            <li><strong>Calendario anual de mantenimientos</strong> acordado con el cliente</li>
+
+            <li><strong>Inventario actualizado</strong> de equipos por cliente</li>
+
+            <li><strong>Permisos de acceso</strong> a las instalaciones del cliente</li>
+
+            <li><strong>Viáticos y recursos</strong> para desplazamiento de técnicos</li>
+
+            <li><strong>Herramientas y materiales</strong> de limpieza y mantenimiento</li>
+
+            <li><strong>Información previa</strong> sobre cambios en ubicación de equipos</li>
+
+        </ul>
+
+ 
+
+        <h2><span class="emoji">📤</span>6. Salidas del Proceso</h2>
+
+        <ul>
+
+            <li><strong>Equipos con mantenimiento completado</strong> y funcionando óptimamente</li>
+
+            <li><strong>Reporte final detallado</strong> con evidencias fotográficas</li>
+
+            <li><strong>Inventario actualizado</strong> en el sistema</li>
+
+            <li><strong>Tickets de fallas</strong> (cuando aplique) para seguimiento</li>
+
+            <li><strong>Documentación de respaldo</strong> en repositorio digital</li>
+
+            <li><strong>Firma de conformidad</strong> del cliente</li>
+
+        </ul>
+
+ 
+
+        <h2><span class="emoji">⚙️</span>7. Descripción Paso a Paso del Proceso</h2>
+
+ 
+
+        <div class="phase-title">FASE 1: PREPARACIÓN Y COORDINACIÓN</div>
+
+        <div class="process-step">
+
+            <strong>1.1 Recepción del calendario anual</strong><br>
+
+            Se recibe el cronograma de mantenimientos acordado con cada cliente
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>1.2 Notificación al cliente (1 mes antes)</strong><br>
+
+            Se contacta al cliente para confirmar la fecha programada de mantenimiento
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>1.3 Solicitud de información previa</strong><br>
+
+            Se solicita al cliente información sobre cambios en ubicación de equipos o nuevos equipos
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>1.4 Verificación de permisos de acceso</strong><br>
+
+            Se confirma que se tienen todos los permisos necesarios para ingresar a las instalaciones
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>1.5 Asignación de técnicos</strong><br>
+
+            Se asignan los técnicos necesarios según la cantidad y tipo de equipos (aproximadamente 1 técnico por cada 25 equipos)
+
+        </div>
+
+ 
+
+        <div class="phase-title">FASE 2: PREPARACIÓN TÉCNICA</div>
+
+        <div class="process-step">
+
+            <strong>2.1 Preparación de herramientas</strong><br>
+
+            Los técnicos preparan todas las herramientas y materiales necesarios para el mantenimiento
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>2.2 Acceso al portal web</strong><br>
+
+            Los técnicos acceden al sistema para descargar el checklist y la información actualizada del cliente
+
+        </div>
+
+ 
+
+        <div class="phase-title">FASE 3: EJECUCIÓN DEL MANTENIMIENTO</div>
+
+        <div class="process-step">
+
+            <strong>3.1 Llegada a la localidad</strong><br>
+
+            Los técnicos se presentan en las instalaciones del cliente en la fecha y hora acordada
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>3.2 Proceso por cada equipo:</strong>
+
+            <ul>
+
+                <li><strong>3.2.1 Inspección visual inicial</strong> - Verificación del estado general del equipo</li>
+
+                <li><strong>3.2.2 Fotografía "antes"</strong> - Registro fotográfico del estado inicial</li>
+
+                <li><strong>3.2.3 Registro de datos</strong> - Actualización de información del equipo en el sistema</li>
+
+                <li><strong>3.2.4 Mantenimiento físico</strong> - Limpieza externa e interna del equipo</li>
+
+                <li><strong>3.2.5 Limpieza lógica</strong> - Eliminación de archivos temporales, desfragmentación, etc.</li>
+
+                <li><strong>3.2.6 Pruebas de funcionamiento</strong> - Verificación de operatividad completa</li>
+
+                <li><strong>3.2.7 Gestión de fallas detectadas:</strong>
+
+                    <ul>
+
+                        <li>Si la falla fue causada por el técnico: <strong>Reparación inmediata</strong></li>
+
+                        <li>Si la falla es preexistente: <strong>Solicitar autorización al cliente</strong> y crear ticket</li>
+
+                    </ul>
+
+                </li>
+
+                <li><strong>3.2.8 Fotografía "después"</strong> - Registro fotográfico del estado final</li>
+
+                <li><strong>3.2.9 Completar checklist</strong> - Registro de todas las actividades realizadas</li>
+
+                <li><strong>3.2.10 Firma del usuario</strong> - Validación y aprobación del trabajo realizado</li>
+
+            </ul>
+
+        </div>
+
+ 
+
+        <div class="phase-title">FASE 4: CIERRE Y DOCUMENTACIÓN</div>
+
+        <div class="process-step">
+
+            <strong>4.1 Subida de información al repositorio</strong><br>
+
+            Toda la información recopilada se sube al sistema central de la empresa
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>4.2 Generación del reporte final</strong><br>
+
+            El sistema genera automáticamente un reporte consolidado con todas las actividades realizadas
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>4.3 Visto bueno del cliente</strong><br>
+
+            Se presenta el reporte al cliente para su revisión y aprobación
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>4.4 Entrega formal del reporte</strong><br>
+
+            Se hace entrega oficial del reporte final al cliente
+
+        </div>
+
+ 
+
+        <div class="phase-title">FASE 5: CONTROL DE CALIDAD</div>
+
+        <div class="process-step">
+
+            <strong>5.1 Verificación de calidad por parte del cliente</strong><br>
+
+            El cliente tiene un período para verificar la calidad del servicio prestado
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>5.2 Gestión de reclamos (si aplica):</strong>
+
+            <ul>
+
+                <li><strong>Investigación del reclamo</strong> - Análisis detallado de la situación reportada</li>
+
+                <li><strong>Determinación de retrabajo</strong> - Evaluación si es necesario repetir el mantenimiento</li>
+
+                <li><strong>Re-ejecución</strong> - Nuevo mantenimiento sin costo adicional (si aplica)</li>
+
+                <li><strong>Validación final</strong> - Confirmación de satisfacción del cliente</li>
+
+            </ul>
+
+        </div>
+
+        <div class="process-step">
+
+            <strong>5.3 Archivo de documentación</strong><br>
+
+            Toda la documentación del proceso se archiva en el repositorio para futuras referencias
+
+        </div>
+
+ 
+
+        <h2><span class="emoji">📅</span>8. Frecuencia o Periodicidad</h2>
+
+        <div class="info-box">
+
+            <p><strong>Frecuencia:</strong> Anual por cliente</p>
+
+            <p><strong>Duración promedio:</strong> 1 hora por equipo</p>
+
+            <p><strong>Planificación:</strong> Calendario anual acordado con cada cliente</p>
+
+        </div>
+
+ 
+
+        <h2><span class="emoji">👤</span>9. Responsables por Actividad</h2>
+
+        <table class="metrics-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Actividad</th>
+
+                    <th>Responsable</th>
+
+                    <th>Rol</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>Coordinación y programación</td>
+
+                    <td>Supervisor de Servicios Técnicos</td>
+
+                    <td>Planificación</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Ejecución del mantenimiento</td>
+
+                    <td>Técnicos e Ingenieros de Campo</td>
+
+                    <td>Operativo</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Validación y firma</td>
+
+                    <td>Usuario final del equipo</td>
+
+                    <td>Cliente</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Visto bueno final</td>
+
+                    <td>Administrador de TI del cliente</td>
+
+                    <td>Cliente</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Control de calidad</td>
+
+                    <td>Supervisor de Servicios Técnicos</td>
+
+                    <td>Supervisión</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Gestión de reclamos</td>
+
+                    <td>Supervisor + Técnicos</td>
+
+                    <td>Correctivo</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+ 
+
+        <h2><span class="emoji">💻</span>10. Sistemas o Herramientas Utilizados</h2>
+
+        <ul>
+
+            <li><strong>Portal web corporativo</strong> - Para acceso a checklists e información de clientes</li>
+
+            <li><strong>Sistema de gestión de inventarios</strong> - Para actualización de datos de equipos</li>
+
+            <li><strong>Repositorio digital</strong> - Para almacenamiento de documentación y evidencias</li>
+
+            <li><strong>Sistema de tickets</strong> - Para gestión de fallas y seguimiento</li>
+
+            <li><strong>Herramientas físicas</strong> - Kit de limpieza, destornilladores, aire comprimido</li>
+
+            <li><strong>Software de diagnóstico</strong> - Para pruebas de funcionamiento y limpieza lógica</li>
+
+            <li><strong>Dispositivos móviles/tablets</strong> - Para captura de firmas y fotografías</li>
+
+        </ul>
+
+ 
+
+        <h2><span class="emoji">📊</span>11. Indicadores o Métricas del Proceso</h2>
+
+        <table class="metrics-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Indicador</th>
+
+                    <th>Fórmula</th>
+
+                    <th>Meta</th>
+
+                    <th>Frecuencia</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>Cumplimiento de cronograma</td>
+
+                    <td>(Mantenimientos ejecutados en fecha / Total programados) x 100</td>
+
+                    <td>≥ 95%</td>
+
+                    <td>Mensual</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Satisfacción del cliente</td>
+
+                    <td>Promedio de calificaciones de satisfacción</td>
+
+                    <td>≥ 4.5/5.0</td>
+
+                    <td>Por servicio</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Tiempo promedio por equipo</td>
+
+                    <td>Tiempo total / Número de equipos atendidos</td>
+
+                    <td>≤ 60 minutos</td>
+
+                    <td>Por servicio</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Tasa de reclamos</td>
+
+                    <td>(Servicios con reclamo / Total servicios) x 100</td>
+
+                    <td>≤ 5%</td>
+
+                    <td>Mensual</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Efectividad de reparaciones</td>
+
+                    <td>(Fallas resueltas / Total fallas detectadas) x 100</td>
+
+                    <td>≥ 90%</td>
+
+                    <td>Mensual</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Completitud de documentación</td>
+
+                    <td>(Reportes completos / Total reportes) x 100</td>
+
+                    <td>100%</td>
+
+                    <td>Por servicio</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+ 
+
+        <h2><span class="emoji">⚠️</span>12. Riesgos Asociados y Controles</h2>
+
+        <table class="risk-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Riesgo</th>
+
+                    <th>Probabilidad</th>
+
+                    <th>Impacto</th>
+
+                    <th>Control/Mitigación</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>Daño a equipos durante mantenimiento</td>
+
+                    <td>Media</td>
+
+                    <td>Alto</td>
+
+                    <td>Capacitación técnica, protocolos de seguridad, seguro de responsabilidad civil</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Pérdida de información del cliente</td>
+
+                    <td>Baja</td>
+
+                    <td>Muy Alto</td>
+
+                    <td>Respaldo previo obligatorio, procedimientos de recuperación</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Incumplimiento de cronograma</td>
+
+                    <td>Media</td>
+
+                    <td>Medio</td>
+
+                    <td>Planificación con buffer de tiempo, comunicación temprana</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Falta de acceso a instalaciones</td>
+
+                    <td>Media</td>
+
+                    <td>Medio</td>
+
+                    <td>Confirmación previa de permisos, contactos de respaldo</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Técnico no disponible</td>
+
+                    <td>Media</td>
+
+                    <td>Medio</td>
+
+                    <td>Pool de técnicos de respaldo, planificación flexible</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Fallas no detectadas durante mantenimiento</td>
+
+                    <td>Media</td>
+
+                    <td>Alto</td>
+
+                    <td>Checklist exhaustivo, pruebas de funcionamiento completas</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Documentación incompleta o perdida</td>
+
+                    <td>Baja</td>
+
+                    <td>Medio</td>
+
+                    <td>Validación en tiempo real, respaldos automáticos</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Reclamos por calidad del servicio</td>
+
+                    <td>Baja</td>
+
+                    <td>Medio</td>
+
+                    <td>Control de calidad, seguimiento post-servicio</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+ 
+
+        <h2><span class="emoji">📋</span>13. Documentos, Plantillas o Formatos Relacionados</h2>
+
+        <ul>
+
+            <li><strong>Checklist de mantenimiento preventivo</strong> - Por tipo de equipo (PC, impresora, servidor)</li>
+
+            <li><strong>Formato de inventario de equipos</strong> - Para actualización de datos</li>
+
+            <li><strong>Plantilla de reporte final</strong> - Documento estándar de entrega</li>
+
+            <li><strong>Formato de autorización de reparaciones</strong> - Para fallas adicionales</li>
+
+            <li><strong>Acta de conformidad</strong> - Para firma del cliente</li>
+
+            <li><strong>Formato de ticket de fallas</strong> - Para seguimiento de problemas</li>
+
+            <li><strong>Calendario anual de mantenimientos</strong> - Por cliente</li>
+
+            <li><strong>Protocolo de seguridad</strong> - Normas de trabajo en campo</li>
+
+        </ul>
+
+ 
+
+        <h2><span class="emoji">🔍</span>14. Puntos de Mejora Detectados por el Usuario</h2>
+
+        <div class="warning-box">
+
+            <p><strong>Nota:</strong> Durante la entrevista no se identificaron puntos específicos de mejora mencionados por el usuario. Se recomienda realizar una sesión de retroalimentación con el equipo técnico y supervisores para identificar oportunidades de optimización desde la perspectiva operativa.</p>
+
+        </div>
+
+ 
+
+        <h2><span class="emoji">💡</span>15. Sugerencias de Mejora Basadas en Buenas Prácticas</h2>
+
+       
+
+        <div class="improvement-box">
+
+            <h3>🚀 Mejoras Recomendadas</h3>
+
+           
+
+            <h4>A. Digitalización y Automatización</h4>
+
+            <ul>
+
+                <li><strong>App móvil integrada:</strong> Desarrollar una aplicación que permita completar checklists, capturar fotos y generar reportes en tiempo real</li>
+
+                <li><strong>Códigos QR en equipos:</strong> Implementar etiquetas QR para acceso rápido al historial y especificaciones de cada equipo</li>
+
+                <li><strong>Notificaciones automáticas:</strong> Sistema de alertas automáticas para recordatorios de mantenimiento</li>
+
+            </ul>
+
+ 
+
+            <h4>B. Optimización de Procesos</h4>
+
+            <ul>
+
+                <li><strong>Mantenimiento predictivo:</strong> Incorporar sensores IoT para monitoreo continuo y mantenimiento basado en condición</li>
+
+                <li><strong>Rutas optimizadas:</strong> Algoritmo de optimización de rutas para minimizar tiempos de desplazamiento</li>
+
+                <li><strong>Kits pre-empacados:</strong> Preparar kits de herramientas específicos por tipo de equipo para reducir tiempo de preparación</li>
+
+            </ul>
+
+ 
+
+            <h4>C. Mejora en la Experiencia del Cliente</h4>
+
+            <ul>
+
+                <li><strong>Portal del cliente:</strong> Plataforma web donde el cliente pueda consultar historial, programar servicios y descargar reportes</li>
+
+                <li><strong>Comunicación proactiva:</strong> Envío de recordatorios y confirmaciones vía email/SMS</li>
+
+                <li><strong>Encuesta de satisfacción digital:</strong> Formulario automático post-servicio para retroalimentación inmediata</li>
+
+            </ul>
+
+ 
+
+            <h4>D. Gestión del Conocimiento</h4>
+
+            <ul>
+
+                <li><strong>Base de conocimiento:</strong> Repositorio de soluciones comunes y procedimientos específicos por marca/modelo</li>
+
+                <li><strong>Videos de capacitación:</strong> Biblioteca de videos para estandarizar procedimientos</li>
+
+                <li><strong>Certificaciones técnicas:</strong> Programa de certificación continua para técnicos</li>
+
+            </ul>
+
+ 
+
+            <h4>E. Indicadores Avanzados</h4>
+
+            <ul>
+
+                <li><strong>Dashboard en tiempo real:</strong> Tablero de control con métricas actualizadas</li>
+
+                <li><strong>Análisis predictivo:</strong> Identificación de patrones de fallas para mantenimiento proactivo</li>
+
+                <li><strong>Benchmarking:</strong> Comparación con estándares de la industria (ITIL, ISO 20000)</li>
+
+            </ul>
+
+        </div>
+
+ 
+
+        <div class="success-box">
+
+            <h3>🎯 Comparación con Mejores Prácticas</h3>
+
+            <p><strong>El proceso actual se alinea bien con:</strong></p>
+
+            <ul>
+
+                <li><strong>ITIL Service Operation:</strong> Gestión de eventos y mantenimiento preventivo</li>
+
+                <li><strong>ISO 20000:</strong> Gestión de servicios de TI con enfoque en la satisfacción del cliente</li>
+
+                <li><strong>ISO 9001:</strong> Enfoque en procesos, documentación y mejora continua</li>
+
+            </ul>
+
+           
+
+            <p><strong>Oportunidades de alineación adicional:</strong></p>
+
+            <ul>
+
+                <li>Implementar gestión de niveles de servicio (SLA) más específicos</li>
+
+                <li>Desarrollar un catálogo de servicios más detallado</li>
+
+                <li>Establecer métricas de disponibilidad y confiabilidad de equipos</li>
+
+            </ul>
+
+        </div>
+
+ 
+
+        <h2><span class="emoji">📝</span>16. Notas Adicionales del Entrevistador</h2>
+
+        <div class="info-box">
+
+            <ul>
+
+                <li><strong>Fortalezas del proceso:</strong> Estructura clara, documentación adecuada, enfoque en la satisfacción del cliente</li>
+
+                <li><strong>Proceso maduro:</strong> El proceso muestra características de un servicio establecido con controles de calidad</li>
+
+                <li><strong>Oportunidad de diferenciación:</strong> La implementación de tecnologías emergentes (IoT, IA) podría generar ventaja competitiva</li>
+
+                <li><strong>Escalabilidad:</strong> El proceso actual puede escalar con las mejoras sugeridas sin cambios estructurales mayores</li>
+
+                <li><strong>Recomendación:</strong> Priorizar la digitalización del proceso como primer paso de mejora</li>
+
+            </ul>
+
+        </div>
+
+ 
+
+        <h2><span class="emoji">🔄</span>17. Diagrama de Flujo del Proceso</h2>
+
+       
+
+        <div class="code-box">
+
+            <h3>Código PlantUML:</h3>
+
+            <pre>
+
+@startuml
+
+title Proceso de Mantenimiento Preventivo de Equipos de Cómputo
+
+ 
+
+start
+
+:Recepción calendario anual;
+
+:Notificación al cliente (1 mes antes);
+
+:Solicitud información previa;
+
+:Verificación permisos acceso;
+
+:Asignación de técnicos;
+
+:Preparación herramientas;
+
+:Acceso portal web;
+
+:Llegada a instalaciones;
+
+ 
+
+repeat
+
+  :Seleccionar siguiente equipo;
+
+  :Inspección visual inicial;
+
+  :Fotografía "antes";
+
+  :Registro de datos;
+
+  :Mantenimiento físico;
+
+  :Limpieza lógica;
+
+  :Pruebas funcionamiento;
+
+ 
+
+  if (¿Falla detectada?) then (Sí)
+
+    if (¿Falla causada por técnico?) then (Sí)
+
+      :Reparación inmediata;
+
+    else (No)
+
+      :Solicitar autorización cliente;
+
+      :Crear ticket falla;
+
+    endif
+
+  endif
+
+ 
+
+  :Fotografía "después";
+
+  :Completar checklist;
+
+  :Firma del usuario;
+
+ 
+
+repeat while (¿Más equipos?) is (Sí)
+
+-> No;
+
+ 
+
+:Subida información repositorio;
+
+:Generación reporte final;
+
+:Visto bueno cliente;
+
+:Entrega formal reporte;
+
+:Verificación calidad cliente;
+
+ 
+
+if (¿Reclamo?) then (Sí)
+
+  :Investigación reclamo;
+
+  if (¿Requiere retrabajo?) then (Sí)
+
+    :Re-ejecución sin costo;
+
+    :Validación final;
+
+  endif
+
+endif
+
+ 
+
+:Archivo documentación;
+
+stop
+
+ 
+
+@enduml
+
+            </pre>
+
+        </div>
+
+ 
+
+        <div class="code-box">
+
+            <h3>Código Mermaid (Alternativo):</h3>
+
+            <pre>
+
+flowchart TD
+
+    A[Recepción calendario anual] --> B[Notificación cliente 1 mes antes]
+
+    B --> C[Solicitud información previa]
+
+    C --> D[Verificación permisos acceso]
+
+    D --> E[Asignación técnicos]
+
+    E --> F[Preparación herramientas]
+
+    F --> G[Acceso portal web]
+
+    G --> H[Llegada instalaciones]
+
+    H --> I[Seleccionar equipo]
+
+    I --> J[Inspección visual]
+
+    J --> K[Fotografía antes]
+
+    K --> L[Registro datos]
+
+    L --> M[Mantenimiento físico]
+
+    M --> N[Limpieza lógica]
+
+    N --> O[Pruebas funcionamiento]
+
+    O --> P{¿Falla detectada?}
+
+    P -->|Sí| Q{¿Falla por técnico?}
+
+    P -->|No| R[Fotografía después]
+
+    Q -->|Sí| S[Reparación inmediata]
+
+    Q -->|No| T[Solicitar autorización]
+
+    T --> U[Crear ticket]
+
+    S --> R
+
+    U --> R
+
+    R --> V[Completar checklist]
+
+    V --> W[Firma usuario]
+
+    W --> X{¿Más equipos?}
+
+    X -->|Sí| I
+
+    X -->|No| Y[Subir información]
+
+    Y --> Z[Generar reporte]
+
+    Z --> AA[Visto bueno cliente]
+
+    AA --> BB[Entrega reporte]
+
+    BB --> CC[Verificación calidad]
+
+    CC --> DD{¿Reclamo?}
+
+    DD -->|Sí| EE[Investigar reclamo]
+
+    DD -->|No| FF[Archivo documentación]
+
+    EE --> GG{¿Requiere retrabajo?}
+
+    GG -->|Sí| HH[Re-ejecución sin costo]
+
+    GG -->|No| FF
+
+    HH --> II[Validación final]
+
+    II --> FF
+
+    FF --> JJ[Fin del proceso]
+
+            </pre>
+
+        </div>
+
+ 
+
+        <div class="footer">
+
+            <h2><span class="emoji">✅</span>Documento Completado</h2>
+
+            <p><strong>Fecha de documentación:</strong> <span id="current-date"></span></p>
+
+            <p><strong>Proceso documentado:</strong> Mantenimiento Preventivo de Equipos de Cómputo</p>
+
+            <p><strong>Estado:</strong> Documentación completa - Listo para implementación de mejoras</p>
+
+           
+
+            <div class="next-steps">
+
+                <h3>🚀 Próximos Pasos Recomendados:</h3>
+
+                <ol>
+
+                    <li><strong>Validación:</strong> Revisar el documento con el equipo técnico y supervisores</li>
+
+                    <li><strong>Priorización:</strong> Seleccionar las mejoras más impactantes y factibles</li>
+
+                    <li><strong>Plan de implementación:</strong> Desarrollar cronograma de implementación de mejoras</li>
+
+                    <li><strong>Métricas baseline:</strong> Establecer mediciones actuales para comparar mejoras</li>
+
+                    <li><strong>Capacitación:</strong> Entrenar al equipo en nuevos procedimientos</li>
+
+                    <li><strong>Seguimiento:</strong> Programar revisiones periódicas del proceso</li>
+
+                </ol>
+
+            </div>
+
+        </div>
+
+ 
+
+        <script>
+
+            // Insertar fecha actual
+
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', {
+
+                year: 'numeric',
+
+                month: 'long',
+
+                day: 'numeric'
+
+            });
+
+        </script>
+
+    </div>
+
+</body>
+
+</html>
+
+ 
