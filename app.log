@@ -3352,3 +3352,103 @@ requests.exceptions.HTTPError: 500 Server Error: Internal Server Error for url: 
 2025-11-06 15:40:16,375 [INFO] [DB] Insertado ID=686d8c4f0b58ccb0e9322d09, longitud HTML=28890, usuario=Servicios Administrados de TI
 2025-11-06 15:40:16,375 [INFO] ==> Proceso completado. Insertados: 6 | Actualizados: 0
 2025-11-06 15:40:16,376 [INFO] 192.168.3.5 - - [06/Nov/2025 15:40:16] "GET /procesar_transcripts?range=Last%2030%20days HTTP/1.1" 200 -
+2026-01-19 16:15:24,683 [INFO] === Iniciando Worker Voiceflow V2 (Analytics) ===
+2026-01-19 16:15:24,729 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.70:5000
+2026-01-19 16:15:24,729 [INFO] [33mPress CTRL+C to quit[0m
+2026-01-19 16:15:24,733 [INFO]  * Restarting with stat
+2026-01-19 16:15:25,261 [INFO] === Iniciando Worker Voiceflow V2 (Analytics) ===
+2026-01-19 16:15:25,276 [WARNING]  * Debugger is active!
+2026-01-19 16:15:25,281 [INFO]  * Debugger PIN: 769-582-936
+2026-01-19 16:15:31,589 [INFO] ==> Iniciando procesamiento. Filtro='All time'
+2026-01-19 16:15:31,590 [INFO] [Voiceflow API] Iniciando recolección de transcripts (Analytics API).
+2026-01-19 16:15:32,453 [INFO] [Voiceflow API] Recibidos 25 registros
+2026-01-19 16:15:32,455 [INFO] [Procesando] ID=696e6f3f6f595a649afcb328 | Sess=hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 16:15:35,174 [ERROR] [HTML API] Error status 500 para hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 16:15:35,177 [INFO] [Procesando] ID=696e6bc76f595a649afc9ee9 | Sess=hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 16:15:36,112 [ERROR] [HTML API] Error status 500 para hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 16:15:36,114 [INFO] [Procesando] ID=696e67cc97aaa2d5046e39f3 | Sess=pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 16:15:36,881 [ERROR] [HTML API] Error status 500 para pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 16:15:36,883 [INFO] [Procesando] ID=696a75a56ac6fe01f9c91e9a | Sess=pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 16:15:37,614 [ERROR] [HTML API] Error status 500 para pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 16:15:37,616 [INFO] [Procesando] ID=696911467f64db07c081c1ea | Sess=pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 16:15:38,331 [ERROR] [HTML API] Error status 500 para pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 16:15:38,332 [INFO] [Procesando] ID=695e97b0e590ecc43f929b26 | Sess=nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:39,141 [ERROR] [HTML API] Error status 500 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:39,143 [INFO] [Procesando] ID=6952dd61d31b11bf660a8db2 | Sess=ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 16:15:40,582 [ERROR] [HTML API] Error status 500 para ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 16:15:40,584 [INFO] [Procesando] ID=694468adc0d23d0c2ce620d6 | Sess=1403462
+2026-01-19 16:15:41,631 [ERROR] [HTML API] Error status 500 para 1403462
+2026-01-19 16:15:41,633 [INFO] [Procesando] ID=694463efc0d23d0c2ce6089f | Sess=1403462
+2026-01-19 16:15:42,416 [ERROR] [HTML API] Error status 500 para 1403462
+2026-01-19 16:15:42,417 [INFO] [Procesando] ID=694460b690bd5d45247e3006 | Sess=hpxinlxl6c130iuwejpa5abs
+2026-01-19 16:15:43,247 [ERROR] [HTML API] Error status 500 para hpxinlxl6c130iuwejpa5abs
+2026-01-19 16:15:43,248 [INFO] [Procesando] ID=6944603690bd5d45247e2c00 | Sess=b9kudo8f2i1gtxm2jfzfb2bo
+2026-01-19 16:15:44,067 [ERROR] [HTML API] Error status 500 para b9kudo8f2i1gtxm2jfzfb2bo
+2026-01-19 16:15:44,070 [INFO] [Procesando] ID=69446033c0d23d0c2ce5f561 | Sess=vfrc1nj716q1lhdkzuogfslf
+2026-01-19 16:15:44,813 [ERROR] [HTML API] Error status 500 para vfrc1nj716q1lhdkzuogfslf
+2026-01-19 16:15:44,816 [INFO] [Procesando] ID=69445f95c0d23d0c2ce5f2ed | Sess=scsu3xd42jj7fyq9th0dligx
+2026-01-19 16:15:45,793 [ERROR] [HTML API] Error status 500 para scsu3xd42jj7fyq9th0dligx
+2026-01-19 16:15:45,796 [INFO] [Procesando] ID=69445f86c0d23d0c2ce5f2b6 | Sess=pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 16:15:46,559 [ERROR] [HTML API] Error status 500 para pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 16:15:46,560 [INFO] [Procesando] ID=69445f7dc0d23d0c2ce5f29d | Sess=vfrc1nj716q1lhdkzuogfslf
+2026-01-19 16:15:47,413 [ERROR] [HTML API] Error status 500 para vfrc1nj716q1lhdkzuogfslf
+2026-01-19 16:15:47,415 [INFO] [Procesando] ID=69445e5ec0d23d0c2ce5edf9 | Sess=nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:48,199 [ERROR] [HTML API] Error status 500 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:48,201 [INFO] [Procesando] ID=69445a8490bd5d45247dfb99 | Sess=ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 16:15:48,966 [ERROR] [HTML API] Error status 500 para ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 16:15:48,968 [INFO] [Procesando] ID=6944593890bd5d45247df008 | Sess=ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 16:15:49,802 [ERROR] [HTML API] Error status 500 para ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 16:15:49,803 [INFO] [Procesando] ID=6944592890bd5d45247def6d | Sess=hpxinlxl6c130iuwejpa5abs
+2026-01-19 16:15:50,573 [ERROR] [HTML API] Error status 500 para hpxinlxl6c130iuwejpa5abs
+2026-01-19 16:15:50,574 [INFO] [Procesando] ID=69445909c0d23d0c2ce5d778 | Sess=hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 16:15:51,351 [ERROR] [HTML API] Error status 500 para hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 16:15:51,354 [INFO] [Procesando] ID=694458f890bd5d45247dedc6 | Sess=v7g1whbot3lrr8qt9dlme90f
+2026-01-19 16:15:52,216 [ERROR] [HTML API] Error status 500 para v7g1whbot3lrr8qt9dlme90f
+2026-01-19 16:15:52,218 [INFO] [Procesando] ID=6944576990bd5d45247ddfaa | Sess=nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:53,257 [ERROR] [HTML API] Error status 500 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:53,258 [INFO] [Procesando] ID=694451b2c0d23d0c2ce5ba27 | Sess=w4pu6aamfavzlrbd268xngln
+2026-01-19 16:15:53,974 [ERROR] [HTML API] Error status 500 para w4pu6aamfavzlrbd268xngln
+2026-01-19 16:15:53,975 [INFO] [Procesando] ID=6944509690bd5d45247d9e9b | Sess=nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:54,755 [ERROR] [HTML API] Error status 500 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:54,756 [INFO] [Procesando] ID=69444ee390bd5d45247d8e4d | Sess=nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:55,490 [ERROR] [HTML API] Error status 500 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 16:15:55,491 [INFO] ==> Fin. Ins:0 Upd:0 Fail:25
+2026-01-19 16:15:55,492 [INFO] 127.0.0.1 - - [19/Jan/2026 16:15:55] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 16:31:24,761 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.70:5000
+2026-01-19 16:31:24,762 [INFO] [33mPress CTRL+C to quit[0m
+2026-01-19 16:31:24,763 [INFO]  * Restarting with stat
+2026-01-19 16:31:25,099 [WARNING]  * Debugger is active!
+2026-01-19 16:31:25,101 [INFO]  * Debugger PIN: 769-582-936
+2026-01-19 16:31:34,540 [INFO] ==> Iniciando procesamiento. Filtro='All time'
+2026-01-19 16:31:35,500 [INFO] [Voiceflow API] Recibidos 25 registros
+2026-01-19 16:32:04,143 [INFO] 127.0.0.1 - - [19/Jan/2026 16:32:04] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 16:32:23,808 [INFO] ==> Iniciando procesamiento. Filtro='All time'
+2026-01-19 16:32:24,566 [INFO] [Voiceflow API] Recibidos 25 registros
+2026-01-19 16:32:55,769 [INFO] 127.0.0.1 - - [19/Jan/2026 16:32:55] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 16:34:40,719 [INFO]  * Detected change in 'c:\\wamp64\\www\\transcripciones\\info_mensaje.py', reloading
+2026-01-19 16:34:40,757 [INFO]  * Restarting with stat
+2026-01-19 16:34:41,133 [WARNING]  * Debugger is active!
+2026-01-19 16:34:41,135 [INFO]  * Debugger PIN: 769-582-936
+2026-01-19 16:35:17,395 [INFO] 127.0.0.1 - - [19/Jan/2026 16:35:17] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 16:37:47,254 [INFO] 127.0.0.1 - - [19/Jan/2026 16:37:47] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 16:44:25,064 [INFO]  * Detected change in 'c:\\wamp64\\www\\transcripciones\\info_mensaje.py', reloading
+2026-01-19 16:44:25,101 [INFO]  * Restarting with stat
+2026-01-19 16:44:25,464 [WARNING]  * Debugger is active!
+2026-01-19 16:44:25,466 [INFO]  * Debugger PIN: 769-582-936
+2026-01-19 16:45:18,488 [INFO] 127.0.0.1 - - [19/Jan/2026 16:45:18] "GET /procesar_transcripts?range=Last%2030%20days HTTP/1.1" 200 -
+2026-01-19 17:17:20,951 [INFO] 127.0.0.1 - - [19/Jan/2026 17:17:20] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 17:21:26,567 [INFO]  * Detected change in 'c:\\wamp64\\www\\transcripciones\\info_mensaje.py', reloading
+2026-01-19 17:21:26,607 [INFO]  * Restarting with stat
+2026-01-19 17:21:26,998 [WARNING]  * Debugger is active!
+2026-01-19 17:21:27,000 [INFO]  * Debugger PIN: 769-582-936
+2026-01-19 17:22:33,791 [INFO] 127.0.0.1 - - [19/Jan/2026 17:22:33] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 17:39:28,588 [INFO]  * Detected change in 'c:\\wamp64\\www\\transcripciones\\info_mensaje.py', reloading
+2026-01-19 17:39:28,629 [INFO]  * Restarting with stat
+2026-01-19 17:54:56,852 [INFO]  * Restarting with stat
+2026-01-19 18:03:11,973 [INFO]  * Restarting with stat

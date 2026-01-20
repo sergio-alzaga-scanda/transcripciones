@@ -1,0 +1,213 @@
+2026-01-19 17:39:29,011 [WARNING]  * Debugger is active!
+2026-01-19 17:39:29,013 [INFO]  * Debugger PIN: 769-582-936
+2026-01-19 17:39:35,318 [INFO] --- INICIO SINCRONIZACIÓN: All time ---
+2026-01-19 17:39:36,204 [INFO] Transcripts encontrados: 25
+2026-01-19 17:39:38,159 [WARNING] API Intermedia devolvió 404 para hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 17:39:39,073 [WARNING] API Intermedia devolvió 404 para hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 17:39:39,826 [WARNING] API Intermedia devolvió 404 para pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 17:39:40,632 [WARNING] API Intermedia devolvió 404 para pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 17:39:41,371 [WARNING] API Intermedia devolvió 404 para pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 17:39:42,428 [WARNING] API Intermedia devolvió 404 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 17:39:43,258 [WARNING] API Intermedia devolvió 404 para ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 17:39:43,963 [WARNING] API Intermedia devolvió 404 para 1403462
+2026-01-19 17:39:44,696 [WARNING] API Intermedia devolvió 404 para 1403462
+2026-01-19 17:39:45,356 [WARNING] API Intermedia devolvió 404 para hpxinlxl6c130iuwejpa5abs
+2026-01-19 17:39:46,065 [WARNING] API Intermedia devolvió 404 para b9kudo8f2i1gtxm2jfzfb2bo
+2026-01-19 17:39:46,860 [WARNING] API Intermedia devolvió 404 para vfrc1nj716q1lhdkzuogfslf
+2026-01-19 17:39:47,653 [WARNING] API Intermedia devolvió 404 para scsu3xd42jj7fyq9th0dligx
+2026-01-19 17:39:48,474 [WARNING] API Intermedia devolvió 404 para pj1zfkw1wlg1aq79ilh6rnfo
+2026-01-19 17:39:49,317 [WARNING] API Intermedia devolvió 404 para vfrc1nj716q1lhdkzuogfslf
+2026-01-19 17:39:50,166 [WARNING] API Intermedia devolvió 404 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 17:39:50,997 [WARNING] API Intermedia devolvió 404 para ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 17:39:52,215 [WARNING] API Intermedia devolvió 404 para ohfgpmxmnv6koelg23qhf5kt
+2026-01-19 17:39:52,978 [WARNING] API Intermedia devolvió 404 para hpxinlxl6c130iuwejpa5abs
+2026-01-19 17:39:53,742 [WARNING] API Intermedia devolvió 404 para hj6wus4l77iuqwh0l0f9w3f0
+2026-01-19 17:39:55,341 [WARNING] API Intermedia devolvió 404 para v7g1whbot3lrr8qt9dlme90f
+2026-01-19 17:39:56,263 [WARNING] API Intermedia devolvió 404 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 17:39:57,253 [WARNING] API Intermedia devolvió 404 para w4pu6aamfavzlrbd268xngln
+2026-01-19 17:39:58,158 [WARNING] API Intermedia devolvió 404 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 17:39:58,863 [WARNING] API Intermedia devolvió 404 para nx09ua85ykj1357j1a5p9d8f
+2026-01-19 17:39:58,870 [INFO] 127.0.0.1 - - [19/Jan/2026 17:39:58] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 17:54:56,791 [INFO]  * Detected change in 'c:\\wamp64\\www\\transcripciones\\info_mensaje.py', reloading
+2026-01-19 17:54:57,212 [WARNING]  * Debugger is active!
+2026-01-19 17:54:57,217 [INFO]  * Debugger PIN: 769-582-936
+2026-01-19 17:55:03,549 [INFO] --- INICIO SINCRONIZACIÓN DB NORMALIZADA ---
+2026-01-19 17:55:04,375 [INFO] Sesiones encontradas en Analytics: 25
+2026-01-19 17:55:06,436 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:06] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=hj6wus4l77iuqwh0l0f9w3f0&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:06,437 [WARNING] Error procesando hj6wus4l77iuqwh0l0f9w3f0: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:08,478 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:08] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=hj6wus4l77iuqwh0l0f9w3f0&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:08,480 [WARNING] Error procesando hj6wus4l77iuqwh0l0f9w3f0: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:10,503 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:10] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=pj1zfkw1wlg1aq79ilh6rnfo&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:10,505 [WARNING] Error procesando pj1zfkw1wlg1aq79ilh6rnfo: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:12,542 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:12] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=pj1zfkw1wlg1aq79ilh6rnfo&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:12,544 [WARNING] Error procesando pj1zfkw1wlg1aq79ilh6rnfo: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:14,592 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:14] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=pj1zfkw1wlg1aq79ilh6rnfo&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:14,593 [WARNING] Error procesando pj1zfkw1wlg1aq79ilh6rnfo: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:16,636 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:16] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=nx09ua85ykj1357j1a5p9d8f&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:16,638 [WARNING] Error procesando nx09ua85ykj1357j1a5p9d8f: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:18,694 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:18] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=ohfgpmxmnv6koelg23qhf5kt&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:18,694 [WARNING] Error procesando ohfgpmxmnv6koelg23qhf5kt: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:20,730 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:20] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=1403462&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:20,732 [WARNING] Error procesando 1403462: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:22,787 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:22] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=1403462&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:22,790 [WARNING] Error procesando 1403462: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:24,847 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:24] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=hpxinlxl6c130iuwejpa5abs&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:24,849 [WARNING] Error procesando hpxinlxl6c130iuwejpa5abs: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:26,893 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:26] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=b9kudo8f2i1gtxm2jfzfb2bo&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:26,895 [WARNING] Error procesando b9kudo8f2i1gtxm2jfzfb2bo: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:28,922 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:28] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=vfrc1nj716q1lhdkzuogfslf&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:28,924 [WARNING] Error procesando vfrc1nj716q1lhdkzuogfslf: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:30,969 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:30] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=scsu3xd42jj7fyq9th0dligx&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:30,972 [WARNING] Error procesando scsu3xd42jj7fyq9th0dligx: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:33,010 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:33] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=pj1zfkw1wlg1aq79ilh6rnfo&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:33,013 [WARNING] Error procesando pj1zfkw1wlg1aq79ilh6rnfo: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:35,068 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:35] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=vfrc1nj716q1lhdkzuogfslf&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:35,069 [WARNING] Error procesando vfrc1nj716q1lhdkzuogfslf: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:37,111 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:37] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=nx09ua85ykj1357j1a5p9d8f&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:37,113 [WARNING] Error procesando nx09ua85ykj1357j1a5p9d8f: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:39,166 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:39] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=ohfgpmxmnv6koelg23qhf5kt&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:39,168 [WARNING] Error procesando ohfgpmxmnv6koelg23qhf5kt: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:41,197 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:41] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=ohfgpmxmnv6koelg23qhf5kt&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:41,199 [WARNING] Error procesando ohfgpmxmnv6koelg23qhf5kt: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:43,241 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:43] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=hpxinlxl6c130iuwejpa5abs&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:43,242 [WARNING] Error procesando hpxinlxl6c130iuwejpa5abs: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:45,285 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:45] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=hj6wus4l77iuqwh0l0f9w3f0&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:45,287 [WARNING] Error procesando hj6wus4l77iuqwh0l0f9w3f0: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:47,337 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:47] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=v7g1whbot3lrr8qt9dlme90f&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:47,338 [WARNING] Error procesando v7g1whbot3lrr8qt9dlme90f: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:49,364 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:49] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=nx09ua85ykj1357j1a5p9d8f&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:49,365 [WARNING] Error procesando nx09ua85ykj1357j1a5p9d8f: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:51,422 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:51] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=w4pu6aamfavzlrbd268xngln&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:51,424 [WARNING] Error procesando w4pu6aamfavzlrbd268xngln: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:53,477 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:53] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=nx09ua85ykj1357j1a5p9d8f&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:53,479 [WARNING] Error procesando nx09ua85ykj1357j1a5p9d8f: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:55,521 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:55] "[33mGET /reimpresion/voiceflow/guardar_manual?sessionID=nx09ua85ykj1357j1a5p9d8f&projectID=693afada764078aca74405a7&VFAPIKey=VF.DM.6966925738c8fb5bdf6bcd81.v2Jtuu2nYTUzbK69 HTTP/1.1[0m" 404 -
+2026-01-19 17:55:55,524 [WARNING] Error procesando nx09ua85ykj1357j1a5p9d8f: <!doctype html>
+<html lang=en>
+<title>404 Not Found</title>
+<h1>Not Found</h1>
+<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>
+
+2026-01-19 17:55:55,525 [INFO] --- FIN PROCESO --- Resumen: {'procesados': 0, 'errores': 25, 'saltados': 0}
+2026-01-19 17:55:55,527 [INFO] 127.0.0.1 - - [19/Jan/2026 17:55:55] "GET /procesar_transcripts?range=All%20time HTTP/1.1" 200 -
+2026-01-19 18:03:11,941 [INFO]  * Detected change in 'c:\\wamp64\\www\\transcripciones\\info_mensaje.py', reloading
