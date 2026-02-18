@@ -30,7 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
       statusLabel.innerHTML = `<i class="fas fa-sync fa-spin"></i> Conectando con el ingestor... Sincronizando proyecto <code>${projectId}</code>`;
 
       // 4. Construir URL hacia tu Ingestor (PHP en puerto 8081)
-      const apiUrl = `http://localhost:8081/transcripciones/api/info_mensaje.php?take=${take}&id_project=${projectId}&api_key=${apiKey}`;
+      const apiUrl = `http://158.23.137.150:8085/api/info_mensaje.php?take=${take}&id_project=${projectId}&api_key=${apiKey}`;
+      // const apiUrl = `http://localhost:8081/transcripciones/api/info_mensaje.php?take=${take}&id_project=${projectId}&api_key=${apiKey}`;
 
       // 5. Ejecutar Petición
       fetch(apiUrl)
