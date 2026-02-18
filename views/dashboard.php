@@ -113,7 +113,7 @@ try {
                         <td>
                             <small class="text-muted">
                                 <i class="far fa-clock"></i> 
-                                <?= $pc['last_sync'] ? date("d/m/Y H:i", strtotime($pc['last_sync'])) : 'Sin sincronizar' ?>
+                                <?= $pc['last_sync'] ? date("d/m/Y H:i", strtotime($pc['last_sync'] . " -6 hours")) : 'Sin sincronizar' ?>
                             </small>
                         </td>
                         <td class="text-center">
