@@ -3,78 +3,98 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (btnSync) {
     btnSync.addEventListener("click", function () {
-      // 1. Obtener valores del DOM
+      // 1. Obtener valores
       const takeInput = document.getElementById("syncTake");
       const projectInput = document.getElementById("syncProjectId");
+      const apiKeyInput = document.getElementById("syncApiKey");
       const statusLabel = document.getElementById("syncStatus");
 
-      const take = takeInput ? takeInput.value : 25;
+      const take = takeInput ? takeInput.value : 100;
       const projectId = projectInput ? projectInput.value : "";
+      const apiKey = apiKeyInput ? apiKeyInput.value : "";
 
-      // 2. Validar
-      if (take < 1 || take > 100) {
-        alert("El número de registros (Take) debe estar entre 1 y 100");
+      // 2. Validaciones básicas
+      if (!projectId || !apiKey) {
+        statusLabel.className = "text-danger fw-bold";
+        statusLabel.innerHTML =
+          '<i class="fas fa-exclamation-triangle"></i> Error: El ID y la API Key son obligatorios.';
         return;
       }
 
-      // 3. UI Loading (Bloquear botón)
+      // 3. UI Indicando "Actualizando" (Feedback visual)
       btnSync.disabled = true;
       btnSync.innerHTML =
-        '<i class="fas fa-spinner fa-spin"></i> Procesando...';
-      statusLabel.className = "text-primary";
-      statusLabel.innerText = "Conectando con Python API...";
+        '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
 
-      // 4. Construir URL
-      // Asegúrate que este puerto (5001) sea el mismo que usa tu vf_db_client.py
-      const apiUrl = `http://127.0.0.1:5001/sync-voiceflow?take=${take}&id_project=${projectId}`;
+      statusLabel.className = "text-primary fw-bold";
+      statusLabel.innerHTML = `<i class="fas fa-sync fa-spin"></i> Conectando con el ingestor... Sincronizando proyecto <code>${projectId}</code>`;
 
-      // 5. Ejecutar Fetch
+      // 4. Construir URL hacia tu Ingestor Python (Puerto 5001)
+      const apiUrl = `http://127.0.0.1:5001/sync-voiceflow?take=${take}&id_project=${projectId}&api_key=${apiKey}`;
+
+      // 5. Ejecutar Petición
       fetch(apiUrl)
         .then((response) => {
-          // Si el servidor responde con error HTTP (ej. 500 o 404)
           if (!response.ok) {
-            throw new Error(`Error del servidor: ${response.status}`);
+            throw new Error(
+              `Error del servidor: ${response.status} ${response.statusText}`,
+            );
           }
           return response.json();
         })
         .then((data) => {
-          // LOG DE DEPURACIÓN: Mira esto en la consola del navegador (F12)
-          console.log("Respuesta recibida:", data);
-
-          // 6. Verificar el status que devuelve Python ("completed")
+          // 6. Caso de Éxito
           if (data.status === "completed") {
-            // --- CORRECCIÓN CLAVE AQUÍ ---
-            // Los datos están dentro del objeto "metrics", no en la raíz.
-            // Usamos || 0 por seguridad, por si vienen nulos.
-            const sesiones = data.metrics?.sessions_upserted || 0;
-            const mensajes = data.metrics?.messages_inserted || 0;
+            const total = data.metrics?.sessions_upserted || 0;
 
-            // Mostrar mensaje de éxito
             statusLabel.className = "text-success fw-bold";
-            statusLabel.innerHTML = `<i class="fas fa-check-circle"></i> Éxito: ${sesiones} sesiones y ${mensajes} mensajes guardados.`;
+            statusLabel.innerHTML = `<i class="fas fa-check-circle"></i> ¡Listo! Se actualizaron ${total} sesiones correctamente.`;
 
-            // Recargar la página después de 2 segundos para ver los cambios
+            btnSync.innerHTML = '<i class="fas fa-check"></i> Completado';
+            btnSync.className = "btn btn-success w-100";
+
+            // Recargar para ver los cambios en la tabla de abajo tras 2 segundos
             setTimeout(() => {
               window.location.reload();
             }, 2000);
           } else {
-            // Si el status no es "completed" (ej. "error")
-            throw new Error(
-              data.error || data.message || "Error desconocido en la respuesta",
-            );
+            throw new Error(data.error || "Error desconocido en el proceso");
           }
         })
         .catch((error) => {
-          console.error("Error en Fetch:", error);
+          // 7. Caso de Error
+          console.error("Error en Sync:", error);
 
-          // Mostrar error en pantalla
           statusLabel.className = "text-danger fw-bold";
-          statusLabel.innerText = "Fallo: " + error.message;
+          statusLabel.innerHTML = `<i class="fas fa-times-circle"></i> Error: ${error.message}`;
 
-          // Restaurar botón para intentar de nuevo
+          // Restaurar botón para reintentar
           btnSync.disabled = false;
-          btnSync.innerText = "Reintentar";
+          btnSync.className = "btn btn-primary w-100";
+          btnSync.innerHTML = "Reintentar Sincronización";
         });
     });
   }
 });
+
+/**
+ * Esta función es la que se llama desde la tabla de abajo
+ */
+function syncProjectManual(id, key) {
+  const inputId = document.getElementById("syncProjectId");
+  const inputKey = document.getElementById("syncApiKey");
+  const btnSync = document.getElementById("btnSync");
+
+  if (inputId && inputKey) {
+    inputId.value = id;
+    inputKey.value = key;
+
+    // Efecto de scroll suave hacia el formulario
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Esperar a que el scroll termine para dar feedback visual
+    setTimeout(() => {
+      btnSync.click();
+    }, 600);
+  }
+}

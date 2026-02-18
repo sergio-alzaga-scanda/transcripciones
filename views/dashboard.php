@@ -1,3 +1,24 @@
+<?php
+require_once 'config/db.php'; // Asegura la ruta correcta a tu archivo
+
+$database = new Database();
+$db = $database->getConnection();
+
+$projectsConfig = [];
+
+try {
+    // Consultamos los proyectos registrados
+    $query = "SELECT project_id, api_key, last_sync FROM projects_config ORDER BY created_at DESC";
+    $stmt = $db->prepare($query);
+    $stmt->execute();
+    
+    // Obtenemos todos los registros como un array asociativo
+    $projectsConfig = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    // En caso de error, el array se queda vacío y no rompe el Dashboard
+    error_log("Error al obtener proyectos: " . $e->getMessage());
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -40,7 +61,84 @@
             <div class="card-body">
                 <div class="row align-items-end">
                     
-                    <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
+                    
+
+                        <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold">Gestión de Proyectos </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="small fw-bold">ID Proyecto</label>
+                <input type="text" id="syncProjectId" class="form-control" placeholder="ID de">
+            </div>
+            <div class="col-md-4">
+                <label class="small fw-bold">API Key</label>
+                <input type="password" id="syncApiKey" class="form-control" placeholder="VF.DM.XXXXXXX">
+            </div>
+            <div class="col-md-2">
+                <label class="small fw-bold">Registros</label>
+                <input type="number" id="syncTake" class="form-control" value="25" min="1">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button class="btn btn-primary w-100" id="btnSync">Sincronizar Ahora</button>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white py-3">
+        <h6 class="m-0 fw-bold text-primary"><i class="fas fa-list"></i> Proyectos en Sistema</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>ID Proyecto</th>
+                    <th>Última Sincronización</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if(!empty($projectsConfig)): ?>
+                    <?php foreach($projectsConfig as $pc): ?>
+                    <tr>
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                <i class="fas fa-fingerprint text-muted"></i> 
+                                <?= htmlspecialchars($pc['project_id']) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                <i class="far fa-clock"></i> 
+                                <?= $pc['last_sync'] ? date("d/m/Y H:i", strtotime($pc['last_sync'])) : 'Sin sincronizar' ?>
+                            </small>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-success px-3" 
+                                    onclick="syncProjectManual('<?= $pc['project_id'] ?>', '<?= $pc['api_key'] ?>')">
+                                <i class="fas fa-sync-alt"></i> Actualizar
+                            </button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="3" class="text-center py-4 text-muted">
+                            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="50" class="mb-2 opacity-50"><br>
+                            No hay proyectos configurados. Usa el formulario superior para agregar uno.
+                        </td>
+                    </tr>
+                <?php endif; ?>
+                <div id="syncStatus" class="mt-2"></div>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
                     <div class="col-md-4">
                         <form method="GET" action="index.php">
                             <input type="hidden" name="page" value="dashboard">
@@ -61,25 +159,6 @@
                         </form>
                     </div>
                     <?php endif; ?>
-
-                    <div class="col-md-8 ms-auto">
-                        <div class="border-start ps-3">
-                            <label class="form-label fw-bold text-primary"><i class="fas fa-sync"></i> Sincronización Manual</label>
-                            <div class="input-group">
-                                <span class="input-group-text">Registros</span>
-                                <input type="number" id="syncTake" class="form-control" min="1" max="100" value="25">
-                                
-                                
-                                    <input type="text" id="syncProjectId" class="form-control" placeholder="ID Proyecto">
-                                
-                                    <input type="hidden" id="syncProjectId" value="<?= $_SESSION['user']['assigned_project_id'] ?? '' ?>">
-                                
-                                
-                                <button class="btn btn-primary" id="btnSync" type="button">Ejecutar Sync</button>
-                            </div>
-                            <small class="text-muted" id="syncStatus"></small>
-                        </div>
-                    </div>
 
                 </div>
             </div>

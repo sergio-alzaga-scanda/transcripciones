@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="card login-card shadow">
-        <h3 class="text-center mb-4">Voiceflow Analytics</h3>
+        <h3 class="text-center mb-4">Centro de transcripciones</h3>
         <?php if(isset($error)): ?>
             <div class="alert alert-danger"><?= $error ?></div>
         <?php endif; ?>
