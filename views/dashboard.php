@@ -77,7 +77,7 @@ try {
             </div>
             <div class="col-md-2">
                 <label class="small fw-bold">Registros</label>
-                <input type="number" id="syncTake" class="form-control" value="25" min="1">
+                <input type="number" id="syncTake" class="form-control" value="100" min="1">
             </div>
             <div class="col-md-3 d-flex align-items-end">
                 <button class="btn btn-primary w-100" id="btnSync">Sincronizar Ahora</button>
