@@ -7,7 +7,7 @@ class Database {
     // private $password = "";
     private $host = "localhost";
     private $port = "3306";
-    private $db_name = "voicelow";
+    private $db_name = "voiceflow";
     private $username = "root";
     private $password = "Melco154.,";
     public $conn;
