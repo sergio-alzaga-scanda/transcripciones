@@ -15,8 +15,11 @@ if (!$db) {
     exit;
 }
 
+// Forzar a PDO a lanzar excepciones para capturar errores de SQL
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 // 2. Obtener parámetros
-$take = $_GET['take'] ?? 25;
+$take = $_GET['take'] ?? 100;
 $project_id = $_GET['id_project'] ?? null;
 $api_key = $_GET['api_key'] ?? null;
 $server_url = "https://proy020.kenos-atom.com/reimpresion/analyze-project";
@@ -51,7 +54,7 @@ try {
         $stmt->execute([$project_id, $api_key]);
     }
 
-    // 4. Consumir el servidor de análisis (Equivalente a requests.get)
+    // 4. Consumir el servidor de análisis
     $query_params = http_build_query([
         'take' => $take,
         'id_project' => $project_id,
@@ -67,7 +70,7 @@ try {
     $data_json = json_decode($response, true);
 
     if (($data_json['status'] ?? '') !== 'success') {
-        throw new Exception("El servidor de análisis devolvió un error.");
+        throw new Exception("El servidor de análisis devolvió un error: " . ($data_json['message'] ?? 'Desconocido'));
     }
 
     // 5. Procesar Sesiones y Mensajes
@@ -75,16 +78,18 @@ try {
     $c_ins = 0;
     $c_upd = 0;
 
-    $db->beginTransaction(); // Iniciamos transacción para proteger la integridad
+    $db->beginTransaction(); 
 
     foreach ($sessions_list as $s) {
         $meta = $s['meta'] ?? [];
         $metrics = $s['metrics'] ?? [];
         $history = $s['history'] ?? [];
+        
+        $vf_id = $meta['id']; // ID único de Voiceflow (ej. 6995ef...)
 
-        // Verificar si la sesión ya existe
-        $check = $db->prepare("SELECT id FROM sessions WHERE session_id = ?");
-        $check->execute([$meta['sessionID']]);
+        // Verificar si la sesión ya existe (usamos el ID de Voiceflow como clave)
+        $check = $db->prepare("SELECT id FROM sessions WHERE id = ?");
+        $check->execute([$vf_id]);
         $exists = $check->fetch();
 
         if (!$exists) {
@@ -95,8 +100,8 @@ try {
             
             $stmt_session = $db->prepare($sql_session);
             $stmt_session->execute([
-                $meta['id'],
-                $meta['sessionID'],
+                $vf_id,
+                $meta['sessionID'] ?? null,
                 $project_id,
                 format_date_with_offset($meta['createdAt']),
                 $meta['platform'] ?? 'unknown',
@@ -108,21 +113,35 @@ try {
             ]);
             $c_ins++;
         } else {
-            // Aquí podrías añadir lógica de UPDATE si fuera necesario
+            // ACTUALIZAR SESIÓN EXISTENTE (Por si cambió la duración o créditos)
+            $sql_update = "UPDATE sessions SET 
+                duration_sec = ?, 
+                cost_credits = ?, 
+                tokens_total = ?, 
+                new_messages_count = ? 
+                WHERE id = ?";
+            $stmt_upd = $db->prepare($sql_update);
+            $stmt_upd->execute([
+                $meta['duration_seconds'] ?? 0,
+                $meta['total_cost_credits'] ?? 0,
+                $metrics['total_tokens'] ?? 0,
+                count($history),
+                $vf_id
+            ]);
             $c_upd++;
         }
 
-        // INSERTAR MENSAJES (Relacionados por el ID de la sesión)
-        // Primero limpiamos mensajes anteriores para evitar duplicados si la sesión se está re-procesando
+        // --- PROCESAR MENSAJES ---
+        // Limpiamos mensajes para evitar duplicados y volvemos a insertar el historial completo
         $del_msg = $db->prepare("DELETE FROM messages WHERE session_table_id = ?");
-        $del_msg->execute([$meta['id']]);
+        $del_msg->execute([$vf_id]);
 
         $sql_msg = "INSERT INTO messages (session_table_id, role, content, timestamp) VALUES (?, ?, ?, ?)";
         $stmt_msg = $db->prepare($sql_msg);
 
         foreach ($history as $m) {
             $stmt_msg->execute([
-                $meta['id'],
+                $vf_id,
                 $m['role'],
                 $m['content'],
                 format_date_with_offset($m['time'])
@@ -138,10 +157,10 @@ try {
 
     echo json_encode([
         "status" => "success",
-        "message" => "Sincronización finalizada",
+        "message" => "Sincronización finalizada correctamente",
         "metrics" => [
             "nuevas_sesiones" => $c_ins,
-            "sesiones_existentes" => $c_upd,
+            "sesiones_actualizadas" => $c_upd,
             "total_procesadas" => $c_ins + $c_upd
         ]
     ]);
@@ -153,6 +172,7 @@ try {
     http_response_code(500);
     echo json_encode([
         "status" => "error",
-        "message" => $e->getMessage()
+        "message" => $e->getMessage(),
+        "trace" => $e->getTraceAsString() // Útil para debug
     ]);
 }
