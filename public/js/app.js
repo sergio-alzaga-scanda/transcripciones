@@ -1,10 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
   const btnSync = document.getElementById("btnSync");
 
-  // Evento para el botón del formulario de Administrador
+  // Evento para el botón principal (si existe en la vista de Admin)
   if (btnSync) {
     btnSync.addEventListener("click", function () {
-      // 1. Obtener valores (con fallback por si no existen)
       const takeInput = document.getElementById("syncTake");
       const projectInput = document.getElementById("syncProjectId");
       const apiKeyInput = document.getElementById("syncApiKey");
@@ -13,48 +12,40 @@ document.addEventListener("DOMContentLoaded", function () {
       const projectId = projectInput ? projectInput.value : "";
       const apiKey = apiKeyInput ? apiKeyInput.value : "";
 
-      // Ejecutar la sincronización
       ejecutarSincronizacion(projectId, apiKey, take);
     });
   }
 });
 
 /**
- * Función centralizada para ejecutar la petición Fetch al Ingestor.
- * Se usa tanto en el formulario admin como en los botones de la tabla.
+ * Función centralizada que hace la petición y maneja las alertas con SweetAlert2
  */
 function ejecutarSincronizacion(projectId, apiKey, take = 100) {
-  const statusLabel = document.getElementById("syncStatus");
-  const btnSync = document.getElementById("btnSync");
-
-  // 1. Validaciones básicas
+  // 1. Validaciones
   if (!projectId || !apiKey) {
-    if (statusLabel) {
-      statusLabel.className = "alert alert-danger mt-3";
-      statusLabel.innerHTML =
-        '<i class="fas fa-exclamation-triangle"></i> Error: El ID del proyecto y la API Key son obligatorios.';
-    } else {
-      alert("Error: El ID del proyecto y la API Key son obligatorios.");
-    }
+    Swal.fire({
+      icon: "warning",
+      title: "Campos incompletos",
+      text: "El ID del proyecto y la API Key son obligatorios.",
+      confirmButtonColor: "#0d6efd",
+    });
     return;
   }
 
-  // 2. UI Indicando "Actualizando" (Feedback visual)
-  if (btnSync) {
-    btnSync.disabled = true;
-    btnSync.innerHTML =
-      '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
-  }
+  // 2. Alerta de Carga (Loading)
+  Swal.fire({
+    title: "Sincronizando...",
+    html: `Conectando con el ingestor para el proyecto <br><b>${projectId}</b>.<br><br>Por favor, espera...`,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
 
-  if (statusLabel) {
-    statusLabel.className = "alert alert-primary mt-3";
-    statusLabel.innerHTML = `<i class="fas fa-sync fa-spin"></i> Conectando con el ingestor... Sincronizando proyecto <code>${projectId}</code>`;
-  }
-
-  // 3. Construir URL hacia tu Ingestor
+  // 3. Petición Fetch
   const apiUrl = `http://158.23.137.150:8085/api/info_mensaje.php?take=${take}&id_project=${projectId}&api_key=${apiKey}`;
 
-  // 4. Ejecutar Petición
   fetch(apiUrl)
     .then((response) => {
       if (!response.ok) {
@@ -65,47 +56,41 @@ function ejecutarSincronizacion(projectId, apiKey, take = 100) {
       return response.json();
     })
     .then((data) => {
-      // 5. Caso de Éxito
+      // 4. Caso de Éxito
       if (data.status === "success" || data.status === "completed") {
         const nuevas = data.metrics?.nuevas_sesiones || 0;
         const total = data.metrics?.total_procesadas || 0;
 
-        if (statusLabel) {
-          statusLabel.className = "alert alert-success mt-3";
-          statusLabel.innerHTML = `<i class="fas fa-check-circle"></i> ¡Listo! ${data.message}. (Nuevas: ${nuevas}, Total: ${total})`;
-        }
-
-        if (btnSync) {
-          btnSync.innerHTML = '<i class="fas fa-check"></i> Completado';
-          btnSync.className = "btn btn-success w-100";
-        }
-
-        // Recargar para ver los cambios en la tabla tras 2 segundos
-        setTimeout(() => {
+        // Cambiar alerta de carga a éxito
+        Swal.fire({
+          icon: "success",
+          title: "¡Completado!",
+          html: `${data.message}<br><br><b>Nuevas sesiones:</b> ${nuevas}<br><b>Total procesadas:</b> ${total}`,
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        }).then(() => {
+          // Recargamos la página cuando el temporizador termina
           window.location.reload();
-        }, 2000);
+        });
       } else {
-        // Si el status no es success, lanzamos el error del backend
+        // Falló lógicamente desde el servidor
         throw new Error(
           data.error || data.message || "Error desconocido en el proceso",
         );
       }
     })
     .catch((error) => {
-      // 6. Caso de Error
+      // 5. Caso de Error
       console.error("Error en Sync:", error);
 
-      if (statusLabel) {
-        statusLabel.className = "alert alert-danger mt-3";
-        statusLabel.innerHTML = `<i class="fas fa-times-circle"></i> Error: ${error.message}`;
-      }
-
-      // Restaurar botón para reintentar
-      if (btnSync) {
-        btnSync.disabled = false;
-        btnSync.className = "btn btn-primary w-100";
-        btnSync.innerHTML = "Registrar y Sincronizar";
-      }
+      // Cambiar alerta a Error
+      Swal.fire({
+        icon: "error",
+        title: "Error en la sincronización",
+        text: error.message,
+        confirmButtonColor: "#dc3545",
+      });
     });
 }
 
@@ -113,24 +98,18 @@ function ejecutarSincronizacion(projectId, apiKey, take = 100) {
  * Esta función es la que se llama desde los botones verdes de la tabla.
  */
 function syncProjectManual(id, key) {
+  // Ya no necesitamos hacer scroll suave hacia arriba ni usar setTimeout.
+  // SweetAlert va a aparecer directo en medio de la pantalla tapando todo.
+
+  // Opcional: llenar los inputs de arriba si el usuario es Admin y los inputs existen
   const inputId = document.getElementById("syncProjectId");
   const inputKey = document.getElementById("syncApiKey");
-  const btnSync = document.getElementById("btnSync");
 
-  // Si los inputs existen (vista de Administrador), los llenamos visualmente
   if (inputId && inputKey) {
     inputId.value = id;
     inputKey.value = key;
-
-    // Efecto de scroll suave hacia el formulario
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    // Esperar a que el scroll termine para ejecutar la petición
-    setTimeout(() => {
-      ejecutarSincronizacion(id, key, 100);
-    }, 600);
-  } else {
-    // Si los inputs NO existen (vista de Usuario normal), ejecutamos la petición directamente
-    ejecutarSincronizacion(id, key, 100);
   }
+
+  // Lanzar la sincronización directa a la API
+  ejecutarSincronizacion(id, key, 100);
 }

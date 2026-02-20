@@ -19,12 +19,16 @@ $projectsConfig = [];
 // Capturar el proyecto seleccionado por el filtro (solo para admin) o el asignado (para usuario)
 $currentFilterId = ($userRole === 'admin') ? ($_GET['project_id'] ?? null) : $assignedProjectId;
 
+// Inicializar variables de estadísticas para evitar errores
+$stats = ['avg_latency' => 0, 'total_messages' => 0, 'msg_user' => 0, 'msg_agent' => 0, 'total_users' => 0, 'total_sessions' => 0];
+$topDays = [];
+$topConversations = [];
+
 try {
     // 2. OBTENER CONFIGURACIÓN TÉCNICA DE PROYECTOS
-    // Consultamos la tabla projects_config para obtener API Keys y fechas de sync
     $query = "SELECT project_id, api_key, last_sync FROM projects_config";
     
-    // Si NO es admin, filtramos por el proyecto que tiene asignado el usuario en su perfil
+    // Si NO es admin, filtramos por el proyecto asignado
     if ($userRole !== 'admin') {
         $query .= " WHERE project_id = :assigned_id";
     }
@@ -40,7 +44,6 @@ try {
     // 3. LOGICA PARA EL SELECTOR DE ADMIN
     $allProjects = [];
     if ($userRole === 'admin') {
-        // El admin necesita ver todos los proyectos registrados en la tabla técnica para el dropdown
         $stmtAll = $db->prepare("SELECT project_id FROM projects_config ORDER BY project_id ASC");
         $stmtAll->execute();
         $allProjects = $stmtAll->fetchAll(PDO::FETCH_ASSOC);
@@ -109,7 +112,6 @@ try {
                         <button class="btn btn-primary w-100" id="btnSync">Registrar y Sincronizar</button>
                     </div>
                 </div>
-                <div id="syncStatus" class="mt-3"></div>
             </div>
         </div>
         <?php endif; ?>
@@ -309,6 +311,9 @@ try {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script src="public/js/app.js"></script>
 
     <script>
