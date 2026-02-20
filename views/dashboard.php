@@ -9,35 +9,41 @@ require_once 'config/db.php';
 $database = new Database();
 $db = $database->getConnection();
 
-// Variables de control de usuario
-$userRole = $_SESSION['user']['role'] ?? 'user';
-$userProjectId = $_SESSION['user']['project_id'] ?? null;
+// 1. VARIABLES DE CONTROL BASADAS EN TU ESTRUCTURA DE TABLA
+$userRole = $_SESSION['user']['role'] ?? 'cliente';
+// Usamos assigned_project_id que es el nombre en tu tabla de usuarios
+$assignedProjectId = $_SESSION['user']['assigned_project_id'] ?? null; 
+
 $projectsConfig = [];
 
 // Capturar el proyecto seleccionado por el filtro (solo para admin) o el asignado (para usuario)
-$currentFilterId = ($userRole === 'admin') ? ($_GET['project_id'] ?? null) : $userProjectId;
+$currentFilterId = ($userRole === 'admin') ? ($_GET['project_id'] ?? null) : $assignedProjectId;
 
 try {
-    // 1. OBTENER CONFIGURACIÓN DE PROYECTOS (Para la tabla y el selector)
+    // 2. OBTENER CONFIGURACIÓN TÉCNICA DE PROYECTOS
+    // Consultamos la tabla projects_config para obtener API Keys y fechas de sync
     $query = "SELECT project_id, api_key, last_sync FROM projects_config";
     
-    // Si NO es admin, solo puede ver SU proyecto
+    // Si NO es admin, filtramos por el proyecto que tiene asignado el usuario en su perfil
     if ($userRole !== 'admin') {
-        $query .= " WHERE project_id = :u_project";
+        $query .= " WHERE project_id = :assigned_id";
     }
     $query .= " ORDER BY created_at DESC";
     
     $stmt = $db->prepare($query);
     if ($userRole !== 'admin') {
-        $stmt->bindParam(':u_project', $userProjectId);
+        $stmt->bindParam(':assigned_id', $assignedProjectId);
     }
     $stmt->execute();
     $projectsConfig = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 2. LOGICA PARA EL SELECTOR DE ADMIN (Si es admin, necesita la lista completa para el dropdown)
+    // 3. LOGICA PARA EL SELECTOR DE ADMIN
     $allProjects = [];
     if ($userRole === 'admin') {
-        $allProjects = $projectsConfig; // En este caso es la misma lista
+        // El admin necesita ver todos los proyectos registrados en la tabla técnica para el dropdown
+        $stmtAll = $db->prepare("SELECT project_id FROM projects_config ORDER BY project_id ASC");
+        $stmtAll->execute();
+        $allProjects = $stmtAll->fetchAll(PDO::FETCH_ASSOC);
     }
 
 } catch (PDOException $e) {
@@ -84,11 +90,11 @@ try {
         
         <?php if ($userRole === 'admin'): ?>
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white fw-bold"><i class="fas fa-plus-circle"></i> Gestión de Proyectos</div>
+            <div class="card-header bg-white fw-bold"><i class="fas fa-plus-circle"></i> Registro Técnico de Proyectos</div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-3">
-                        <label class="small fw-bold">ID Proyecto</label>
+                        <label class="small fw-bold">ID Proyecto (Voiceflow)</label>
                         <input type="text" id="syncProjectId" class="form-control" placeholder="ID del proyecto">
                     </div>
                     <div class="col-md-4">
@@ -144,7 +150,7 @@ try {
                             <?php foreach($projectsConfig as $pc): ?>
                             <tr>
                                 <td>
-                                    <span class="badge bg-light text-dark border">
+                                    <span class="badge bg-light text-dark border p-2">
                                         <i class="fas fa-fingerprint text-muted"></i> 
                                         <?= htmlspecialchars($pc['project_id']) ?>
                                     </span>
@@ -166,8 +172,9 @@ try {
                         <?php else: ?>
                             <tr>
                                 <td colspan="3" class="text-center py-4 text-muted">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="40" class="mb-2 opacity-50"><br>
-                                    No se encontraron proyectos asignados.
+                                    <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+                                    No se encontró configuración técnica para el proyecto: <b><?= htmlspecialchars($assignedProjectId ?? 'No asignado') ?></b>.<br>
+                                    <small>Contacta al administrador para registrar las credenciales del proyecto.</small>
                                 </td>
                             </tr>
                         <?php endif; ?>
@@ -233,7 +240,7 @@ try {
                             </li>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <li class="list-group-item text-muted">Sin datos suficientes</li>
+                            <li class="list-group-item text-muted">Sin datos de actividad</li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -261,7 +268,7 @@ try {
             <div class="col-lg-8">
                 <div class="card shadow border-0 h-100">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 fw-bold text-primary">Actividad de Sesiones</h6>
+                        <h6 class="m-0 fw-bold text-primary">Actividad de Sesiones (Mensajes Diarios)</h6>
                         <div class="d-flex gap-1">
                             <input type="date" id="chartStart" class="form-control form-control-sm w-auto">
                             <input type="date" id="chartEnd" class="form-control form-control-sm w-auto">
@@ -289,7 +296,7 @@ try {
                     <div class="table-responsive">
                         <table class="table table-hover table-striped">
                             <thead class="table-light">
-                                <tr><th>ID Sesión</th><th>Última Actividad</th><th>Tokens Consumidos</th><th>Ver</th></tr>
+                                <tr><th>ID Sesión</th><th>Última Actividad</th><th>Tokens</th><th>Acción</th></tr>
                             </thead>
                             <tbody id="usersTableBody"></tbody>
                         </table>
@@ -325,7 +332,7 @@ try {
                 });
         }
 
-        // 2. CONFIGURACIÓN DEL GRÁFICO (Chart.js)
+        // 2. CHART.JS LOGIC
         const ctx = document.getElementById('dailyChart').getContext('2d');
         let myChart;
         const initialLabels = <?= json_encode($chartLabels ?? []) ?>;
@@ -338,7 +345,7 @@ try {
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Sesiones',
+                        label: 'Interacciones',
                         data: data,
                         borderColor: '#4e73df',
                         backgroundColor: 'rgba(78, 115, 223, 0.1)',
@@ -370,11 +377,11 @@ try {
             });
         });
 
-        // 3. MODAL DE USUARIOS
+        // 3. AJAX USERS
         $('#btnShowUsers').click(function() {
             let projectId = $('#currentProjectId').val();
             $('#usersModal').modal('show');
-            $('#usersTableBody').html('<tr><td colspan="4" class="text-center">Consultando base de datos...</td></tr>');
+            $('#usersTableBody').html('<tr><td colspan="4" class="text-center">Cargando...</td></tr>');
             
             $.ajax({
                 url: 'index.php?page=ajax_users',
@@ -384,13 +391,13 @@ try {
                 success: function(users) {
                     let html = '';
                     if (users.length === 0) {
-                        html = '<tr><td colspan="4" class="text-center text-muted">No hay usuarios en este proyecto.</td></tr>';
+                        html = '<tr><td colspan="4" class="text-center">No hay usuarios</td></tr>';
                     } else {
                         users.forEach(u => {
                             html += `<tr>
-                                <td><small class="fw-bold">${u.session_id}</small></td>
+                                <td><small class="fw-bold text-muted">${u.session_id}</small></td>
                                 <td>${u.last_seen}</td>
-                                <td><span class="badge bg-light text-dark">${u.total_tokens}</span></td>
+                                <td><span class="badge bg-light text-dark border">${u.total_tokens}</span></td>
                                 <td><a href="index.php?page=chat&session_id=${u.session_db_id}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
                             </tr>`;
                         });
