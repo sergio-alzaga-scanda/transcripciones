@@ -109,6 +109,7 @@ try {
                         <button class="btn btn-primary w-100" id="btnSync">Registrar y Sincronizar</button>
                     </div>
                 </div>
+                <div id="syncStatus" class="mt-3"></div>
             </div>
         </div>
         <?php endif; ?>
