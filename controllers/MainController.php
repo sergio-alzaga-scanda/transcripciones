@@ -4,7 +4,6 @@ require_once dirname(__DIR__) . '/models/Conversation.php';
 require_once dirname(__DIR__) . '/models/Metrics.php';
 
 class MainController {
-    // ... (Constructor y getFilterProject igual que antes) ...
     private $metricsModel;
     private $convModel;
 
@@ -29,10 +28,8 @@ class MainController {
     public function dashboard() {
         $projectId = $this->getFilterProject();
         
-        // 1. Obtener Métricas Generales
         $stats = $this->metricsModel->getStats($projectId);
         
-        // 2. Obtener Datos para el Gráfico
         $chartDataRaw = $this->metricsModel->getDailyTrend($projectId);
         $chartLabels = [];
         $chartValues = [];
@@ -41,17 +38,11 @@ class MainController {
             $chartValues[] = $day['total'];
         }
 
-        // ======================================================
-        // 3. AGREGAR ESTO (Es lo que te falta)
-        // ======================================================
         $topDays = $this->metricsModel->getTopDays($projectId);
         $topConversations = $this->metricsModel->getTopLongestSessions($projectId);
-        // ======================================================
 
-        // 4. Lista de proyectos
         $projects = $this->metricsModel->getProjects(); 
         
-        // 5. Auto-Sync
         $triggerAutoSync = false;
         if (isset($_SESSION['trigger_sync']) && $_SESSION['trigger_sync'] === true) {
             $triggerAutoSync = true;
@@ -61,10 +52,8 @@ class MainController {
         include dirname(__DIR__) . '/views/dashboard.php';
     }
 
-    // --- NUEVO: Endpoint AJAX para actualizar el gráfico ---
     public function ajaxChartData() {
-        $projectId = $this->getFilterProject(); // Respetar permisos
-        // Si el admin mandó un project_id específico por AJAX, úsalo (pero valídalo)
+        $projectId = $this->getFilterProject(); 
         if ($_SESSION['user']['role'] === 'admin' && isset($_GET['project_id_ajax'])) {
             $projectId = $_GET['project_id_ajax'];
         }
@@ -74,7 +63,6 @@ class MainController {
 
         $data = $this->metricsModel->getDailyTrend($projectId, $start, $end);
         
-        // Formatear para JS
         $response = [
             'labels' => [],
             'values' => []
@@ -87,7 +75,6 @@ class MainController {
         exit;
     }
 
-    // --- NUEVO: Endpoint AJAX para lista de usuarios ---
     public function ajaxUsersList() {
         $projectId = $this->getFilterProject();
         if ($_SESSION['user']['role'] === 'admin' && isset($_GET['project_id_ajax'])) {
@@ -98,18 +85,19 @@ class MainController {
         echo json_encode($users);
         exit;
     }
-public function chatViewer() {
+
+    public function chatViewer() {
         $projectId = $this->getFilterProject();
         
         // Filtros
         $search = $_GET['search'] ?? '';
         $sort = $_GET['sort'] ?? 'DESC'; 
-        $dateFilter = $_GET['date'] ?? ''; // NUEVO: Capturar fecha
+        $dateFilter = $_GET['date'] ?? ''; 
         
-        // 1. Obtener sesiones (Pasamos fecha al modelo)
+        // 1. Obtener sesiones
         $sessions = $this->convModel->getSessions($projectId, $search, $sort, $dateFilter);
         
-        // 2. Obtener lista de proyectos (Solo Admin)
+        // 2. Obtener lista de proyectos
         $projects = [];
         if ($_SESSION['user']['role'] === 'admin') {
             $projects = $this->metricsModel->getProjects();
@@ -125,15 +113,19 @@ public function chatViewer() {
             $messages = $this->convModel->getMessages($selectedSessionId);
             
             foreach($sessions as &$s) {
-                if($s['id'] === $selectedSessionId) {
+                // Usar == en lugar de === para prevenir fallos por tipos de datos (string vs int)
+                if($s['id'] == $selectedSessionId) {
                     $s['is_read'] = 1; 
+                    $s['new_messages_count'] = '0';
                     $currentSession = $s;
                     break;
                 }
             }
+            // ¡CLAVE! Destruir la referencia para evitar duplicados en la vista
+            unset($s); 
         }
 
-        include dirname(__DIR__) . '/views/chat_viewer.php';
+        include dirname(__DIR__) . '/views/chat_viewer.php'; 
     }
 }
 ?>

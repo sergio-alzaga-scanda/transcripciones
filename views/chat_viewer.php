@@ -15,32 +15,6 @@
         .session-item:hover { background-color: #f8f9fa; }
         .session-item.active { background-color: #e8f0fe; border-left-color: #0d6efd; }
 
-        /* Estilo para NO LEÍDOS */
-        .session-item.unread { 
-            background-color: #fff5f5; /* Fondo rojizo muy suave */
-            border-left-color: rgba(53, 220, 67, 1); 
-        }
-        
-        /* Badge Animado para mensajes nuevos */
-        .badge-new-count {
-            font-size: 0.7rem; 
-            background-color: rgba(53, 220, 67, 1); ; 
-            color: white;
-            padding: 3px 8px; 
-            border-radius: 12px; 
-            font-weight: bold; 
-            box-shadow: 0 2px 4px rgba(33, 155, 50, 0.3);
-            animation: pulse 2s infinite;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
         /* CHAT AREA */
         .chat-area { background-color: #f4f6f8; height: 100%; display: flex; flex-direction: column; }
         .messages-container { flex: 1; overflow-y: auto; padding: 20px; }
@@ -82,13 +56,13 @@
                     <form method="GET" action="index.php" id="filterForm">
                         <input type="hidden" name="page" value="chat">
                         
-                        <?php if($_SESSION['user']['role'] === 'admin'): ?>
+                        <?php if(isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'admin'): ?>
                             <div class="mb-2">
                                 <select name="project_id" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">Todos los Proyectos</option>
                                     <?php foreach ($projects as $p): ?>
-                                        <option value="<?= $p['project_id'] ?>" <?= (isset($_GET['project_id']) && $_GET['project_id'] == $p['project_id']) ? 'selected' : '' ?>>
-                                            <?= $p['project_id'] ?>
+                                        <option value="<?= htmlspecialchars($p['project_id']) ?>" <?= (isset($_GET['project_id']) && $_GET['project_id'] == $p['project_id']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($p['project_id']) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -111,7 +85,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted fw-bold me-2">Orden:</small>
                             <select name="sort" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit()">
-                                <option value="DESC" <?= ($sort == 'DESC') ? 'selected' : '' ?>>⚠️ No Leídos / Recientes</option>
+                                <option value="DESC" <?= ($sort == 'DESC') ? 'selected' : '' ?>>🔄 Más Recientes</option>
                                 <option value="ASC" <?= ($sort == 'ASC') ? 'selected' : '' ?>>📅 Más Antiguos</option>
                                 <option value="MSG_DESC" <?= ($sort == 'MSG_DESC') ? 'selected' : '' ?>>💬 Mayor N° Mensajes</option>
                             </select>
@@ -128,43 +102,33 @@
                     <?php else: ?>
                         <?php foreach($sessions as $s): ?>
                             <?php 
+                                // Determinar la sesión activa comparando IDs
                                 $isActive = ($selectedSessionId == $s['id']) ? 'active' : '';
-                                $no_mensaje_nuevos = ($selectedSessionId == $s['new_messages_count']) ? '' : '';
-                                
-                                // Calcular mensajes nuevos
-                                $newCount = isset($s['new_messages_count']) ? intval($s['new_messages_count']) : 0;
-                                
-                                // Si está activa, visualmente asumimos 0 (aunque la BD ya se actualizó en el controlador)
-                                if ($isActive) $newCount = 0;
-
-                                $isUnread = ($newCount > 0);
-                                $rowClass = $isActive ? 'active' : ($isUnread ? 'unread' : '');
                                 $date = date("d/m H:i", strtotime($s['created_at']));
+                                
+                                // Mantener filtros en la URL de navegación
+                                $url = "index.php?page=chat&session_id={$s['id']}&search=" . urlencode($search) . "&sort={$sort}&date={$dateFilter}";
+                                if (isset($_GET['project_id'])) {
+                                    $url .= "&project_id=" . urlencode($_GET['project_id']);
+                                }
                             ?>
-                            <a href="index.php?page=chat&session_id=<?= $s['id'] ?>&search=<?= urlencode($search) ?>&sort=<?= $sort ?>&date=<?= $dateFilter ?><?= isset($_GET['project_id']) ? '&project_id='.$_GET['project_id'] : '' ?>" 
-                               class="list-group-item list-group-item-action session-item <?= $rowClass ?>">
+                            <a href="<?= $url ?>" class="list-group-item list-group-item-action session-item <?= $isActive ?>">
                                 
                                 <div class="d-flex w-100 justify-content-between align-items-center">
-                                    <h6 class="mb-1 text-truncate" style="max-width: 60%;">
+                                    <h6 class="mb-1 text-truncate fw-bold" style="max-width: 60%;">
                                         <?= htmlspecialchars($s['session_id']) ?>
                                     </h6>
-                                    <small class="text-muted" style="font-size: 0.75rem;"><?= $date ?></small>
+                                    <small class="<?= $isActive ? 'text-primary' : 'text-muted' ?>" style="font-size: 0.75rem;"><?= $date ?></small>
                                 </div>
                                 
                                 <div class="d-flex justify-content-between align-items-center mt-1">
-                                    <p class="mb-0 small text-muted text-truncate" style="max-width: 65%;">
+                                    <p class="mb-0 small text-truncate <?= $isActive ? 'text-dark' : 'text-muted' ?>" style="max-width: 70%;">
                                         <i class="fas fa-robot"></i> <?= htmlspecialchars($s['model_used']) ?>
                                     </p>
                                     
-                                    <?php if($newCount > 0): ?>
-                                        <span class="badge-new-count" title="Mensajes Nuevos">
-                                            +<?= $newCount ?> <i class="fas fa-envelope"></i>
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="badge bg-light text-muted border rounded-pill" style="font-size: 0.7em;">
-                                            <?= $s['new_messages_count'] ?> <i class="fas fa-comment"></i>
-                                        </span>
-                                    <?php endif; ?>
+                                    <span class="badge <?= $isActive ? 'bg-primary text-white' : 'bg-light text-muted border' ?> rounded-pill" style="font-size: 0.7em;">
+                                        <?= $s['msg_count'] ?> <i class="fas fa-comment"></i>
+                                    </span>
                                 </div>
                             </a>
                         <?php endforeach; ?>
@@ -175,17 +139,14 @@
             <div class="col-md-8 col-lg-9 chat-area">
                 <?php if ($currentSession): ?>
                     <?php
-                        // --- 1. CÁLCULO DINÁMICO DE TIEMPOS (Ignoramos DB) ---
                         $startTimeStr = "N/A";
                         $endTimeStr = "N/A";
                         $totalSeconds = 0;
                         
-                        // Variables para promedios
                         $avgUserTimeStr = "N/A";
                         $avgBotTimeStr = "N/A";
 
                         if (!empty($messages)) {
-                            // A) Calcular Duración Total
                             $firstMsg = reset($messages);
                             $lastMsg = end($messages);
 
@@ -198,12 +159,10 @@
                             $startTimeStr = date("d/m H:i:s", $tsStart);
                             $endTimeStr = date("d/m H:i:s", $tsEnd);
 
-                            // B) Calcular Promedios
                             $totalUserTime = 0; $countUser = 0;
                             $totalBotTime = 0;  $countBot = 0;
                             $prevMsg = null;
                             
-                            // Resetear array para recorrerlo de nuevo
                             reset($messages); 
 
                             foreach ($messages as $msg) {
@@ -212,7 +171,6 @@
                                     $t2 = strtotime($msg['timestamp']);
                                     $diff = $t2 - $t1;
                                     
-                                    // Filtro de sanidad (si tardó más de 1 hora, no cuenta para promedio)
                                     if ($diff < 3600) { 
                                         if ($msg['role'] == 'assistant' && $prevMsg['role'] == 'user') {
                                             $totalBotTime += $diff; $countBot++;
@@ -224,15 +182,11 @@
                                 $prevMsg = $msg;
                             }
 
-                            // Función auxiliar para formatear
                             $fnFormat = function($s) {
                                 if ($s < 1) return "< 1s";
                                 if ($s < 60) return round($s, 1) . "s";
-                                
-                                // CORREGIDO: Usar fmod para evitar error de float to int conversion
                                 $m = floor($s / 60); 
                                 $sec = round(fmod($s, 60)); 
-                                
                                 return "{$m}m {$sec}s";
                             };
 
@@ -240,12 +194,10 @@
                             if ($countBot > 0)  $avgBotTimeStr  = $fnFormat($totalBotTime / $countBot);
                         }
 
-                        // C) Formato para el Badge Amarillo
                         $minTotal = floor($totalSeconds / 60);
                         $secTotal = $totalSeconds % 60;
                         $timeTooltip = "{$minTotal} min {$secTotal} seg";
                         
-                        // Formato decimal para vista rápida (ej: 3.5 min)
                         $displayTotal = ($totalSeconds < 60) 
                                         ? $totalSeconds . "s" 
                                         : round($totalSeconds / 60, 1) . " min";
@@ -299,7 +251,6 @@
                                 $currTime = strtotime($msg['timestamp']);
                                 $timeDiffStr = '';
                                 
-                                // Calcular diferencia para etiqueta entre burbujas
                                 if ($prevTime !== null) {
                                     $diff = $currTime - $prevTime;
                                     if ($diff < 60) $str = $diff . "s";
@@ -336,8 +287,7 @@
                         <i class="fas fa-comments fa-4x mb-3 opacity-25"></i>
                         <h4>Selecciona una conversación</h4>
                         <p class="text-center px-4">
-                            Utiliza los filtros de la izquierda para buscar.<br>
-                            Los badges <span class="badge bg-danger rounded-pill">+N</span> indican mensajes nuevos.
+                            Utiliza los filtros de la izquierda para buscar o selecciona un elemento de la lista.
                         </p>
                     </div>
                 <?php endif; ?>

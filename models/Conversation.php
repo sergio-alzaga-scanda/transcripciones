@@ -8,16 +8,18 @@ class Conversation {
 
     public function markAsRead($sessionId) {
         $sql = "UPDATE sessions 
-                SET is_read = 1, new_messages_count = '' 
+                SET is_read = 1, new_messages_count = '0' 
                 WHERE id = :id";
         
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $sessionId);
         $stmt->execute();
     }
-    // --- MODIFICADO: Agregamos $dateFilter ---
+
     public function getSessions($project_id = null, $search = '', $sortParam = 'DESC', $dateFilter = '') {
         
+        // El orden ahora es estrictamente por fecha o cantidad de mensajes. 
+        // Se elimina por completo la prioridad de "no leídos".
         switch ($sortParam) {
             case 'ASC':
                 $orderBy = "s.created_at ASC"; 
@@ -25,15 +27,9 @@ class Conversation {
             case 'MSG_DESC':
                 $orderBy = "msg_count DESC";
                 break;
-            case 'MSG_ASC':
-                $orderBy = "msg_count ASC";
-                break;
             case 'DESC':
             default:
-                // ORDEN POR DEFECTO: 
-                // 1. is_read ASC (0=No leído va antes que 1=Leído)
-                // 2. created_at DESC (Los más recientes primero)
-                $orderBy = "s.is_read ASC, s.created_at DESC"; 
+                $orderBy = "s.created_at DESC"; 
                 break;
         }
 
@@ -49,12 +45,12 @@ class Conversation {
         if (!empty($search)) {
             $sql .= " AND (s.session_id LIKE :search OR s.id LIKE :search)";
         }
-        // --- NUEVO: Filtro de Fecha ---
         if (!empty($dateFilter)) {
             $sql .= " AND DATE(s.created_at) = :filterDate";
         }
         
-        $sql .= " ORDER BY $orderBy LIMIT 50";
+        // GROUP BY s.id asegura que no existan elementos duplicados en el listado
+        $sql .= " GROUP BY s.id ORDER BY $orderBy LIMIT 50";
 
         $stmt = $this->conn->prepare($sql);
         
@@ -63,7 +59,6 @@ class Conversation {
             $term = "%$search%";
             $stmt->bindParam(':search', $term);
         }
-        // Bind de Fecha
         if (!empty($dateFilter)) {
             $stmt->bindParam(':filterDate', $dateFilter);
         }
