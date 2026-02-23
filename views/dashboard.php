@@ -287,24 +287,7 @@ try {
                     </ul>
                 </div>
 
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white fw-bold"><i class="fas fa-comments text-primary"></i> Conversaciones más largas</div>
-                    <div class="list-group list-group-flush">
-                        <?php if(!empty($topConversations)): ?>
-                            <?php foreach($topConversations as $convo): ?>
-                            <a href="index.php?page=chat&session_id=<?= $convo['id'] ?>" class="list-group-item list-group-item-action">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <small class="fw-bold text-truncate" style="max-width: 150px;"><?= $convo['session_id'] ?></small>
-                                    <span class="badge bg-primary rounded-pill"><?= $convo['msg_count'] ?></span>
-                                </div>
-                                <small class="text-muted"><?= date("d/m H:i", strtotime($convo['created_at'])) ?></small>
-                            </a>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="p-3 text-muted">Sin datos suficientes</div>
-                        <?php endif; ?>
-                    </div>
-                </div>
+                
             </div>
 
             <div class="col-lg-8">
