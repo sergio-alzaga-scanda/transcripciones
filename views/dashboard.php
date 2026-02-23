@@ -24,34 +24,73 @@ $stats = ['avg_latency' => 0, 'total_messages' => 0, 'msg_user' => 0, 'msg_agent
 $topDays = [];
 $topConversations = [];
 
-try {
-    // 2. OBTENER CONFIGURACIÓN TÉCNICA DE PROYECTOS
-    $query = "SELECT project_id, api_key, last_sync FROM projects_config";
-    
-    // Si NO es admin, filtramos por el proyecto asignado
-    if ($userRole !== 'admin') {
-        $query .= " WHERE project_id = :assigned_id";
-    }
-    $query .= " ORDER BY created_at DESC";
-    
-    $stmt = $db->prepare($query);
-    if ($userRole !== 'admin') {
-        $stmt->bindParam(':assigned_id', $assignedProjectId);
-    }
-    $stmt->execute();
-    $projectsConfig = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 3. LOGICA PARA EL SELECTOR DE ADMIN
-    $allProjects = [];
-    if ($userRole === 'admin') {
-        $stmtAll = $db->prepare("SELECT project_id FROM projects_config ORDER BY project_id ASC");
-        $stmtAll->execute();
-        $allProjects = $stmtAll->fetchAll(PDO::FETCH_ASSOC);
+try {
+    // 1. OBTENER CONFIGURACIÓN DE PROYECTOS (Dropdown y tabla superior)
+    $queryProj = "SELECT project_id, api_key, last_sync FROM projects_config";
+    if ($userRole !== 'admin') {
+        $queryProj .= " WHERE project_id = :assigned_id";
     }
+    $stmtProj = $db->prepare($queryProj);
+    if ($userRole !== 'admin') { $stmtProj->bindParam(':assigned_id', $assignedProjectId); }
+    $stmtProj->execute();
+    $projectsConfig = $stmtProj->fetchAll(PDO::FETCH_ASSOC);
+
+    // 2. CONSULTA DE MÉTRICAS (Usando tus dos tablas: sessions y messages)
+    $whereClause = "";
+    $params = [];
+    if ($currentFilterId) {
+        $whereClause = " WHERE project_id = :pid";
+        $params[':pid'] = $currentFilterId;
+    }
+
+    // A. Latencia y Sesiones (Desde la tabla 'sessions')
+    $sqlSessions = "SELECT 
+                        AVG(latency_ms) as avg_latency, 
+                        COUNT(*) as total_sessions,
+                        COUNT(DISTINCT session_id) as total_users
+                     FROM sessions" . $whereClause;
+
+    $stmtSess = $db->prepare($sqlSessions);
+    $stmtSess->execute($params);
+    $resSess = $stmtSess->fetch(PDO::FETCH_ASSOC);
+
+    if ($resSess) {
+        $stats['avg_latency'] = $resSess['avg_latency'] ?? 0;
+        $stats['total_sessions'] = $resSess['total_sessions'] ?? 0;
+        $stats['total_users'] = $resSess['total_users'] ?? 0;
+    }
+
+    // B. Conteo de Mensajes (Desde la tabla 'messages')
+    // Nota: Asumo que 'messages' también tiene 'project_id' y 'role'
+    $sqlMessages = "SELECT 
+                        COUNT(*) as total_messages,
+                        SUM(CASE WHEN role = 'user' THEN 1 ELSE 0 END) as msg_user,
+                        SUM(CASE WHEN role IN ('assistant', 'agent') THEN 1 ELSE 0 END) as msg_agent
+                     FROM messages" . $whereClause;
+
+    $stmtMsg = $db->prepare($sqlMessages);
+    $stmtMsg->execute($params);
+    $resMsg = $stmtMsg->fetch(PDO::FETCH_ASSOC);
+
+    if ($resMsg) {
+        $stats['total_messages'] = $resMsg['total_messages'] ?? 0;
+        $stats['msg_user'] = $resMsg['msg_user'] ?? 0;
+        $stats['msg_agent'] = $resMsg['msg_agent'] ?? 0;
+    }
+
+    // 3. TOP DÍAS ACTIVOS (Desde 'sessions')
+    $sqlDays = "SELECT DATE(created_at) as fecha, COUNT(*) as total 
+                FROM sessions $whereClause 
+                GROUP BY DATE(created_at) ORDER BY total DESC LIMIT 5";
+    $stmtDays = $db->prepare($sqlDays);
+    $stmtDays->execute($params);
+    $topDays = $stmtDays->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
-    error_log("Error al obtener proyectos: " . $e->getMessage());
+    error_log("Error en Dashboard: " . $e->getMessage());
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
