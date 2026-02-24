@@ -1,3 +1,4 @@
+
 <?php
 // Inicio de sesión para validar roles y asignaciones
 if (session_status() === PHP_SESSION_NONE) {
@@ -5,7 +6,35 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once 'config/db.php'; 
+// 1. OBTENER DATOS DE SESIÓN
+$userRole = $_SESSION['user']['role'] ?? 'cliente';
+$assignedProjectId = $_SESSION['user']['assigned_project_id'] ?? null;
 
+// 2. DEFINIR EL PROYECTO ACTUAL
+// Si es admin, puede elegir del GET, si no, es estrictamente su asignado
+if ($userRole === 'admin') {
+    $currentFilterId = $_GET['project_id'] ?? null; // null significa "Todos los proyectos"
+} else {
+    $currentFilterId = $assignedProjectId;
+}
+
+// 3. OBTENER DATOS PARA EL COMBO (PROYECTOS)
+$projectsList = [];
+if ($userRole === 'admin') {
+    // El admin ve todos los proyectos que existen en la tabla sessions o config
+    $projectsList = $metrics->getProjects(); 
+} else {
+    // El usuario normal solo se ve a sí mismo en la lista (o podrías ocultar el combo)
+    if ($assignedProjectId) {
+        $projectsList = [['project_id' => $assignedProjectId]];
+    }
+}
+
+// 4. CARGAR ESTADÍSTICAS BASADAS EN EL FILTRO
+$stats = $metrics->getStats($currentFilterId);
+$topDays = $metrics->getTopDays($currentFilterId);
+$topConversations = $metrics->getTopLongestSessions($currentFilterId);
+$dailyTrend = $metrics->getDailyTrend($currentFilterId);
 $database = new Database();
 $db = $database->getConnection();
 
@@ -155,29 +184,37 @@ try {
         </div>
         <?php endif; ?>
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 fw-bold text-primary">
-                    <i class="fas fa-list"></i> 
-                    <?= ($userRole === 'admin') ? 'Proyectos en Sistema' : 'Mi Proyecto Asignado' ?>
-                </h6>
+        <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="GET" action="index.php" class="row g-3 align-items-center">
+            <input type="hidden" name="page" value="dashboard">
+            
+            <div class="col-auto">
+                <label class="fw-bold text-muted">Proyecto:</label>
+            </div>
+            
+            <div class="col-md-4">
+                <select name="project_id" class="form-select" onchange="this.form.submit()" <?php echo ($userRole !== 'admin') ? 'disabled' : ''; ?>>
+                    <?php if ($userRole === 'admin'): ?>
+                        <option value="">🌍 Todos los proyectos (Global)</option>
+                    <?php endif; ?>
 
-                <?php if ($userRole === 'admin'): ?>
-                <form method="GET" action="index.php" class="d-flex gap-2">
-                    <input type="hidden" name="page" value="dashboard">
-                    <select name="project_id" class="form-select form-select-sm" style="width: auto;">
-                        <option value="">Todos los proyectos</option>
-                        <?php foreach ($allProjects as $p): ?>
-                            <option value="<?= $p['project_id'] ?>" <?= ($p['project_id'] == ($currentFilterId ?? '')) ? 'selected' : '' ?>>
-                                <?= $p['project_id'] ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <button class="btn btn-sm btn-outline-primary" type="submit">Filtrar</button>
-                </form>
+                    <?php foreach ($projectsList as $p): ?>
+                        <option value="<?php echo $p['project_id']; ?>" 
+                            <?php echo ($currentFilterId == $p['project_id']) ? 'selected' : ''; ?>>
+                            📦 <?php echo $p['project_id']; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                
+                <?php if ($userRole !== 'admin'): ?>
+                    <input type="hidden" name="project_id" value="<?php echo $assignedProjectId; ?>">
+                    <div class="form-text text-primary">Vista limitada a su proyecto asignado.</div>
                 <?php endif; ?>
             </div>
-
+        </form>
+    </div>
+</div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
