@@ -14,41 +14,56 @@ $userRole = $_SESSION['user']['role'] ?? 'cliente';
 // Usamos assigned_project_id que es el nombre en tu tabla de usuarios
 $assignedProjectId = $_SESSION['user']['assigned_project_id'] ?? null; 
 
-$projectsConfig = [];
-
 // Capturar el proyecto seleccionado por el filtro (solo para admin) o el asignado (para usuario)
 $currentFilterId = ($userRole === 'admin') ? ($_GET['project_id'] ?? null) : $assignedProjectId;
 
 // Inicializar variables de estadísticas para evitar errores
-$stats = ['avg_latency' => 0, 'total_messages' => 0, 'msg_user' => 0, 'msg_agent' => 0, 'total_users' => 0, 'total_sessions' => 0];
+$stats = [
+    'avg_latency' => 0, 
+    'total_messages' => 0, 
+    'msg_user' => 0, 
+    'msg_agent' => 0, 
+    'total_users' => 0, 
+    'total_sessions' => 0,
+    'total_cost' => 0
+];
 $topDays = [];
-$topConversations = [];
-
+$projectsConfig = [];
+$allProjects = []; // Para el dropdown del admin
 
 try {
     // 1. OBTENER CONFIGURACIÓN DE PROYECTOS (Dropdown y tabla superior)
+    // Para el selector de Admin: todos los proyectos
+    $stmtAll = $db->prepare("SELECT DISTINCT project_id FROM sessions WHERE project_id IS NOT NULL");
+    $stmtAll->execute();
+    $allProjects = $stmtAll->fetchAll(PDO::FETCH_ASSOC);
+
+    // Para la tabla de configuración técnica
     $queryProj = "SELECT project_id, api_key, last_sync FROM projects_config";
     if ($userRole !== 'admin') {
         $queryProj .= " WHERE project_id = :assigned_id";
     }
     $stmtProj = $db->prepare($queryProj);
-    if ($userRole !== 'admin') { $stmtProj->bindParam(':assigned_id', $assignedProjectId); }
+    if ($userRole !== 'admin') { 
+        $stmtProj->bindParam(':assigned_id', $assignedProjectId); 
+    }
     $stmtProj->execute();
     $projectsConfig = $stmtProj->fetchAll(PDO::FETCH_ASSOC);
 
     // 2. CONSULTA DE MÉTRICAS (Usando tus dos tablas: sessions y messages)
-    $whereClause = "";
     $params = [];
+    $whereClause = " WHERE 1=1";
     if ($currentFilterId) {
-        $whereClause = " WHERE project_id = :pid";
+        $whereClause .= " AND project_id = :pid";
         $params[':pid'] = $currentFilterId;
     }
 
     // A. Latencia y Sesiones (Desde la tabla 'sessions')
     $sqlSessions = "SELECT 
-                        AVG(latency_ms) as avg_latency, 
+                        IFNULL(AVG(latency_ms), 0) as avg_latency, 
                         COUNT(*) as total_sessions,
-                        COUNT(DISTINCT session_id) as total_users
+                        COUNT(DISTINCT session_id) as total_users,
+                        IFNULL(SUM(cost_credits), 0) as total_cost
                      FROM sessions" . $whereClause;
 
     $stmtSess = $db->prepare($sqlSessions);
@@ -56,18 +71,24 @@ try {
     $resSess = $stmtSess->fetch(PDO::FETCH_ASSOC);
 
     if ($resSess) {
-        $stats['avg_latency'] = $resSess['avg_latency'] ?? 0;
-        $stats['total_sessions'] = $resSess['total_sessions'] ?? 0;
-        $stats['total_users'] = $resSess['total_users'] ?? 0;
+        $stats['avg_latency'] = $resSess['avg_latency'];
+        $stats['total_sessions'] = $resSess['total_sessions'];
+        $stats['total_users'] = $resSess['total_users'];
+        $stats['total_cost'] = $resSess['total_cost'];
     }
 
-    // B. Conteo de Mensajes (Desde la tabla 'messages')
-    // Nota: Asumo que 'messages' también tiene 'project_id' y 'role'
+    // B. Conteo de Mensajes (Join con sessions para asegurar el filtro de proyecto)
     $sqlMessages = "SELECT 
-                        COUNT(*) as total_messages,
-                        SUM(CASE WHEN role = 'user' THEN 1 ELSE 0 END) as msg_user,
-                        SUM(CASE WHEN role IN ('assistant', 'agent') THEN 1 ELSE 0 END) as msg_agent
-                     FROM messages" . $whereClause;
+                        COUNT(m.id) as total_messages,
+                        SUM(CASE WHEN m.role = 'user' THEN 1 ELSE 0 END) as msg_user,
+                        SUM(CASE WHEN m.role IN ('assistant', 'agent', 'assistant') THEN 1 ELSE 0 END) as msg_agent
+                     FROM messages m
+                     INNER JOIN sessions s ON m.session_table_id = s.id";
+    
+    // Aplicar filtro de proyecto a través de la tabla sessions vinculada
+    if ($currentFilterId) {
+        $sqlMessages .= " WHERE s.project_id = :pid";
+    }
 
     $stmtMsg = $db->prepare($sqlMessages);
     $stmtMsg->execute($params);
@@ -87,11 +108,22 @@ try {
     $stmtDays->execute($params);
     $topDays = $stmtDays->fetchAll(PDO::FETCH_ASSOC);
 
+    // 4. DATOS INICIALES PARA EL GRÁFICO (Últimos 30 días)
+    $sqlTrend = "SELECT DATE(created_at) as fecha, COUNT(*) as total 
+                 FROM sessions $whereClause 
+                 AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                 GROUP BY DATE(created_at) ORDER BY fecha ASC";
+    $stmtTrend = $db->prepare($sqlTrend);
+    $stmtTrend->execute($params);
+    $trendData = $stmtTrend->fetchAll(PDO::FETCH_ASSOC);
+    $chartLabels = array_column($trendData, 'fecha');
+    $chartValues = array_column($trendData, 'total');
+
 } catch (PDOException $e) {
     error_log("Error en Dashboard: " . $e->getMessage());
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -165,15 +197,14 @@ try {
                 <?php if ($userRole === 'admin'): ?>
                 <form method="GET" action="index.php" class="d-flex gap-2">
                     <input type="hidden" name="page" value="dashboard">
-                    <select name="project_id" class="form-select form-select-sm" style="width: auto;">
-                        <option value="">Todos los proyectos</option>
+                    <select name="project_id" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                        <option value=""> Todos los proyectos</option>
                         <?php foreach ($allProjects as $p): ?>
                             <option value="<?= $p['project_id'] ?>" <?= ($p['project_id'] == ($currentFilterId ?? '')) ? 'selected' : '' ?>>
-                                <?= $p['project_id'] ?>
+                                 <?= $p['project_id'] ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <button class="btn btn-sm btn-outline-primary" type="submit">Filtrar</button>
                 </form>
                 <?php endif; ?>
             </div>
@@ -230,7 +261,7 @@ try {
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">T. Prom. Respuesta</h6>
-                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['avg_latency'] ?? 0, 0) ?> <small class="fs-6 text-muted">ms</small></h3>
+                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['avg_latency'], 0) ?> <small class="fs-6 text-muted">ms</small></h3>
                     </div>
                 </div>
             </div>
@@ -239,10 +270,10 @@ try {
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-info">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Mensajes Totales</h6>
-                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_messages'] ?? 0) ?></h3>
+                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_messages']) ?></h3>
                         <div class="mt-2 small">
-                            <span class="text-success"><i class="fas fa-user"></i> <?= number_format($stats['msg_user'] ?? 0) ?></span> | 
-                            <span class="text-primary"><i class="fas fa-robot"></i> <?= number_format($stats['msg_agent'] ?? 0) ?></span>
+                            <span class="text-success"><i class="fas fa-user"></i> <?= number_format($stats['msg_user']) ?></span> | 
+                            <span class="text-primary"><i class="fas fa-robot"></i> <?= number_format($stats['msg_agent']) ?></span>
                         </div>
                     </div>
                 </div>
@@ -252,7 +283,7 @@ try {
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-success clickable-card" id="btnShowUsers">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Usuarios Únicos</h6>
-                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_users'] ?? 0) ?></h3>
+                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_users']) ?></h3>
                         <small class="text-success">Ver lista <i class="fas fa-arrow-right"></i></small>
                     </div>
                 </div>
@@ -262,7 +293,7 @@ try {
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary clickable-card" onclick="window.location.href='index.php?page=chat'">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Sesiones Totales</h6>
-                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_sessions'] ?? 0) ?></h3>
+                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_sessions']) ?></h3>
                         <small class="text-primary">Ir al historial <i class="fas fa-arrow-right"></i></small>
                     </div>
                 </div>
@@ -278,7 +309,7 @@ try {
                             <?php foreach($topDays as $day): ?>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <?= date("d/m/Y", strtotime($day['fecha'])) ?>
-                                <span class="badge bg-secondary rounded-pill"><?= $day['total'] ?> msgs</span>
+                                <span class="badge bg-secondary rounded-pill"><?= $day['total'] ?> sesiones</span>
                             </li>
                             <?php endforeach; ?>
                         <?php else: ?>
@@ -286,14 +317,12 @@ try {
                         <?php endif; ?>
                     </ul>
                 </div>
-
-                
             </div>
 
             <div class="col-lg-8">
                 <div class="card shadow border-0 h-100">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 fw-bold text-primary">Actividad de Sesiones (Mensajes Diarios)</h6>
+                        <h6 class="m-0 fw-bold text-primary">Actividad de Sesiones (Últimos 30 días)</h6>
                         <div class="d-flex gap-1">
                             <input type="date" id="chartStart" class="form-control form-control-sm w-auto">
                             <input type="date" id="chartEnd" class="form-control form-control-sm w-auto">
@@ -314,7 +343,7 @@ try {
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Usuarios Únicos Registrados</h5>
+                    <h5 class="modal-title">Sesiones Recientes</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -333,38 +362,15 @@ try {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <script src="public/js/app.js"></script>
 
     <script>
-        // 1. AUTO-SYNC INICIAL
-        const shouldSync = <?= (isset($triggerAutoSync) && $triggerAutoSync) ? 'true' : 'false' ?>;
-        if (shouldSync) { runAutoSync(); }
-
-        function runAutoSync() {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.classList.add('active');
-            let projectId = "<?= $currentFilterId ?? '' ?>";
-            
-            const apiUrl = `http://127.0.0.1:5001/sync-voiceflow?take=100&id_project=${projectId}`;
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    setTimeout(() => { window.location.reload(); }, 500);
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    overlay.classList.remove('active');
-                });
-        }
-
-        // 2. CHART.JS LOGIC
+        // CHART.JS LOGIC
         const ctx = document.getElementById('dailyChart').getContext('2d');
         let myChart;
-        const initialLabels = <?= json_encode($chartLabels ?? []) ?>;
-        const initialData = <?= json_encode($chartValues ?? []) ?>;
+        const initialLabels = <?= json_encode($chartLabels) ?>;
+        const initialData = <?= json_encode($chartValues) ?>;
 
         function renderChart(labels, data) {
             if (myChart) myChart.destroy();
@@ -373,24 +379,32 @@ try {
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Interacciones',
+                        label: 'Nuevas Sesiones',
                         data: data,
-                        borderColor: '#4e73df',
-                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
-                        borderWidth: 2,
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        borderWidth: 3,
                         fill: true,
-                        tension: 0.4
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#0d6efd'
                     }]
                 },
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        y: { beginAtZero: true, ticks: { precision: 0 } },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
         }
+        
         renderChart(initialLabels, initialData);
 
+        // Actualizar gráfico vía AJAX
         $('#btnUpdateChart').click(function() {
             let start = $('#chartStart').val();
             let end = $('#chartEnd').val();
@@ -401,11 +415,13 @@ try {
                 method: 'GET',
                 data: { start: start, end: end, project_id_ajax: projectId },
                 dataType: 'json',
-                success: function(response) { renderChart(response.labels, response.values); }
+                success: function(response) { 
+                    renderChart(response.labels, response.values); 
+                }
             });
         });
 
-        // 3. AJAX USERS
+        // AJAX USERS
         $('#btnShowUsers').click(function() {
             let projectId = $('#currentProjectId').val();
             $('#usersModal').modal('show');
@@ -418,14 +434,14 @@ try {
                 dataType: 'json',
                 success: function(users) {
                     let html = '';
-                    if (users.length === 0) {
+                    if (!users || users.length === 0) {
                         html = '<tr><td colspan="4" class="text-center">No hay usuarios</td></tr>';
                     } else {
                         users.forEach(u => {
                             html += `<tr>
                                 <td><small class="fw-bold text-muted">${u.session_id}</small></td>
                                 <td>${u.last_seen}</td>
-                                <td><span class="badge bg-light text-dark border">${u.total_tokens}</span></td>
+                                <td><span class="badge bg-light text-dark border">${u.total_tokens || 0}</span></td>
                                 <td><a href="index.php?page=chat&session_id=${u.session_db_id}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
                             </tr>`;
                         });
