@@ -1,16 +1,35 @@
 <?php
-// Incluir la conexión (ruta confirmada: /home/Crisisyco/transcripciones-new/config/db.php)
+/**
+ * API de Transferencia con Autenticación Básica
+ * Credenciales: admin_select / sc4nd4_2026!
+ */
+
+// 1. Configuración de Autenticación
+$usuario_valido = "admin_select";
+$password_valido = "sc4nd4_2026!";
+
+if (!isset($_SERVER['PHP_AUTH_USER']) || 
+    $_SERVER['PHP_AUTH_USER'] !== $usuario_valido || 
+    $_SERVER['PHP_AUTH_PW'] !== $password_valido) {
+    
+    header('WWW-Authenticate: Basic realm="Acceso Restringido API"');
+    header('HTTP/1.0 401 Unauthorized');
+    echo json_encode(["status" => "error", "message" => "Autenticación fallida"]);
+    exit;
+}
+
+// 2. Incluir la conexión (Ruta: /home/Crisisyco/transcripciones-new/config/db.php)
 require_once __DIR__ . '/../config/db.php';
 
 // Cabeceras para respuesta JSON
 header('Content-Type: application/json');
 
-// Cambiamos $_POST por $_GET para que lea los parámetros de la URL
+// 3. Obtener parámetros de la URL (GET)
 $session_id = $_GET['session_id'] ?? null;
 $resumen    = $_GET['resumen'] ?? null;
 $project_id = $_GET['project_id'] ?? null;
 
-// Validar parámetros
+// Validar parámetros obligatorios
 if (!$session_id || !$project_id) {
     echo json_encode([
         "status" => "error", 
@@ -23,7 +42,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 try {
-    // 1. Obtener la API Key del proyecto
+    // 4. Obtener la API Key del proyecto
     $stmtProj = $db->prepare("SELECT api_key FROM projects_config WHERE project_id = :pid LIMIT 1");
     $stmtProj->execute([':pid' => $project_id]);
     $proyecto = $stmtProj->fetch(PDO::FETCH_ASSOC);
@@ -34,9 +53,8 @@ try {
 
     $apiKey = $proyecto['api_key'];
 
-    // 2. Ejecutar la sincronización externa (cURL)
-    $take = 100;
-    $apiUrl = "http://158.23.137.150:8085/api/info_mensaje.php?take=$take&id_project=$project_id&api_key=$apiKey";
+    // 5. Sincronización externa vía cURL
+    $apiUrl = "http://158.23.137.150:8085/api/info_mensaje.php?take=100&id_project=$project_id&api_key=$apiKey";
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $apiUrl);
@@ -46,8 +64,7 @@ try {
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    // 3. Registrar en la tabla 'messages'
-    // Importante: role = 'transferencia', transferencia = 1
+    // 6. Registro en tabla 'messages'
     $insertQuery = "INSERT INTO messages (session_table_id, role, content, timestamp, transferencia) 
                     VALUES (:session, 'transferencia', :content, NOW(), 1)";
     
@@ -60,17 +77,14 @@ try {
     echo json_encode([
         "status" => "success",
         "message" => "Transferencia exitosa y sincronización enviada.",
+        "auth" => "authorized",
         "details" => [
             "session" => $session_id,
-            "project" => $project_id,
             "external_api_status" => $httpCode
         ]
     ]);
 
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode([
-        "status" => "error", 
-        "message" => $e->getMessage()
-    ]);
+    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 }
