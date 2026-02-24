@@ -1,7 +1,8 @@
 <?php
 
-// Esto sube dos niveles para llegar a la raíz y entrar a /config/
-require_once __DIR__ . '/../../config/db.php';
+
+// Subimos un nivel (..) para salir de controllers y entramos a config
+require_once __DIR__ . '/../config/db.php';
 
 
 $database = new Database();
