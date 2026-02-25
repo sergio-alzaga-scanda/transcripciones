@@ -28,12 +28,14 @@ header('Content-Type: application/json');
 $session_id = $_GET['session_id'] ?? null;
 $resumen    = $_GET['resumen'] ?? null;
 $project_id = $_GET['project_id'] ?? null;
+$canal      = $_GET['canal'] ?? null; // <-- NUEVO: Capturar el dato "canal"
 
 // Validar parámetros obligatorios
-if (!$session_id || !$project_id) {
+// NUEVO: Agregué $canal a la validación. Si no quieres que sea obligatorio, puedes quitar '|| !$canal'
+if (!$session_id || !$project_id || !$canal) { 
     echo json_encode([
         "status" => "error", 
-        "message" => "Faltan parámetros obligatorios (session_id o project_id)"
+        "message" => "Faltan parámetros obligatorios (session_id, project_id o canal)"
     ]);
     exit;
 }
@@ -65,13 +67,17 @@ try {
     curl_close($ch);
 
     // 6. Registro en tabla 'messages'
-    $insertQuery = "INSERT INTO messages (session_table_id, role, content, timestamp, transferencia) 
-                    VALUES (:session, 'transferencia', :content, NOW(), 1)";
+    // NUEVO: Se agregó la columna 'canal' y su marcador ':canal' a la consulta SQL
+    $insertQuery = "INSERT INTO messages (session_table_id, role, content, timestamp, transferencia, canal) 
+                    VALUES (:session, 'transferencia', :content, NOW(), 1, :canal)";
     
     $stmtIns = $db->prepare($insertQuery);
+    
+    // NUEVO: Se vincula la variable $canal al marcador :canal
     $stmtIns->execute([
         ':session' => $session_id,
-        ':content' => "Se hizo la transferencia a un agente. Resumen: " . ($resumen ?? "Sin resumen")
+        ':content' => "Se hizo la transferencia a un agente. Resumen: " . ($resumen ?? "Sin resumen"),
+        ':canal'   => $canal
     ]);
 
     echo json_encode([
@@ -80,6 +86,7 @@ try {
         "auth" => "authorized",
         "details" => [
             "session" => $session_id,
+            "canal" => $canal, // <-- NUEVO: Agregado a los detalles de la respuesta para confirmar
             "external_api_status" => $httpCode
         ]
     ]);
