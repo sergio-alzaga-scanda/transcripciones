@@ -84,7 +84,7 @@ try {
     escribir_log("Llamada cURL finalizada. Código HTTP: $httpCode. Respuesta: $apiResponse");
 
     // 6. Registro en tabla 'messages'
-    $contenido = "Se hizo la transferencia a un agente. <br> Resumen: " . ($resumen ?? "Sin resumen");
+    $contenido = "Resumen: " . ($resumen ?? "Sin resumen");
     
     $insertQuery = "INSERT INTO messages (session_table_id, role, content, timestamp, transferencia, canal) 
                     VALUES (:session, 'transferencia', :content, NOW(), 1, :canal)";
