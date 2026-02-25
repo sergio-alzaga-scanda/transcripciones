@@ -1,0 +1,21 @@
+[2026-02-25 16:30:11] === NUEVA PETICIÓN RECIBIDA ===
+[2026-02-25 16:30:11] Parámetros GET recibidos: {"session_id":"694468adc0d23d0c2ce620d6","resumen":"prueba","project_id":"686d850308d685f4c8312d26","canal":"Voz"}
+[2026-02-25 16:30:11] API Key obtenida correctamente para el proyecto 686d850308d685f4c8312d26.
+[2026-02-25 16:30:31] Llamada cURL finalizada. Código HTTP: 200. Respuesta: {"status":"success","message":"Sincronizaci\u00f3n finalizada correctamente","metrics":{"nuevas_sesiones":0,"sesiones_actualizadas":100,"total_procesadas":100}}
+[2026-02-25 16:30:31] Intentando insertar en base de datos. Query: INSERT INTO messages (session_table_id, role, content, timestamp, transferencia, canal) 
+                    VALUES (:session, 'transferencia', :content, NOW(), 1, :canal)
+[2026-02-25 16:30:31] Inserción exitosa en la base de datos.
+[2026-02-25 20:31:20] === NUEVA PETICIÓN RECIBIDA ===
+[2026-02-25 20:31:20] Parámetros GET recibidos: {"session_id":"698fe5f6821f10000795083f","resumen":"prueba","project_id":"686d850308d685f4c8312d26","canal":"Voz"}
+[2026-02-25 20:31:20] API Key obtenida correctamente para el proyecto 686d850308d685f4c8312d26.
+[2026-02-25 20:31:34] Llamada cURL finalizada. Código HTTP: 200. Respuesta: {"status":"success","message":"Sincronizaci\u00f3n finalizada correctamente","metrics":{"nuevas_sesiones":0,"sesiones_actualizadas":100,"total_procesadas":100}}
+[2026-02-25 20:31:34] Intentando insertar en base de datos. Query: INSERT INTO messages (session_table_id, role, content, timestamp, transferencia, canal) 
+                    VALUES (:session, 'transferencia', :content, NOW(), 1, :canal)
+[2026-02-25 20:31:34] Inserción exitosa en la base de datos.
+[2026-02-25 20:31:40] === NUEVA PETICIÓN RECIBIDA ===
+[2026-02-25 20:31:40] Parámetros GET recibidos: {"session_id":"i1rhsa3irhw61uc11e3pv9ee","resumen":"prueba","project_id":"686d850308d685f4c8312d26","canal":"Voz"}
+[2026-02-25 20:31:40] API Key obtenida correctamente para el proyecto 686d850308d685f4c8312d26.
+[2026-02-25 20:31:54] Llamada cURL finalizada. Código HTTP: 200. Respuesta: {"status":"success","message":"Sincronizaci\u00f3n finalizada correctamente","metrics":{"nuevas_sesiones":0,"sesiones_actualizadas":100,"total_procesadas":100}}
+[2026-02-25 20:31:54] Intentando insertar en base de datos. Query: INSERT INTO messages (session_table_id, role, content, timestamp, transferencia, canal) 
+                    VALUES (:session, 'transferencia', :content, NOW(), 1, :canal)
+[2026-02-25 20:31:54] Inserción exitosa en la base de datos.
