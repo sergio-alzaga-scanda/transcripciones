@@ -87,7 +87,7 @@ try {
     $contenido =  ($resumen ?? "Sin resumen");
     
     $insertQuery = "INSERT INTO messages (session_table_id, role, content, timestamp, transferencia, canal) 
-                    VALUES (:session, 'transferencia', :content, NOW(), 1, :canal)";
+                    VALUES (:session, 'assistant', :content, NOW(), 1, :canal)";
     
     escribir_log("Intentando insertar en base de datos. Query: $insertQuery");
     
