@@ -314,7 +314,7 @@
                                 
                                 <?= nl2br(htmlspecialchars($msg['content'])) ?>
                                 
-                                <span class="msg-time"><?= date("H:i:s", $currTime) ?></span>
+                                <span class="msg-time"><?= date("H:i:s", strtotime("-6 hours", $currTime)) ?></span>
                             </div>
                         <?php endforeach; ?>
                         
