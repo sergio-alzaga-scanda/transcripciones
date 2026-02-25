@@ -18,8 +18,6 @@ class Conversation {
 
     public function getSessions($project_id = null, $search = '', $sortParam = 'DESC', $dateFilter = '') {
         
-        // El orden ahora es estrictamente por fecha o cantidad de mensajes. 
-        // Se elimina por completo la prioridad de "no leídos".
         switch ($sortParam) {
             case 'ASC':
                 $orderBy = "s.created_at ASC"; 
@@ -43,20 +41,19 @@ class Conversation {
             $sql .= " AND s.project_id = :pid";
         }
         if (!empty($search)) {
+            $term = "%$search%";
             $sql .= " AND (s.session_id LIKE :search OR s.id LIKE :search)";
         }
         if (!empty($dateFilter)) {
             $sql .= " AND DATE(s.created_at) = :filterDate";
         }
         
-        // GROUP BY s.id asegura que no existan elementos duplicados en el listado
         $sql .= " GROUP BY s.id ORDER BY $orderBy LIMIT 50";
 
         $stmt = $this->conn->prepare($sql);
         
         if ($project_id) $stmt->bindParam(':pid', $project_id);
         if (!empty($search)) {
-            $term = "%$search%";
             $stmt->bindParam(':search', $term);
         }
         if (!empty($dateFilter)) {

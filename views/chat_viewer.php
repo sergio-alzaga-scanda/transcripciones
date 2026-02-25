@@ -28,9 +28,22 @@
         .msg-user { background-color: #0d6efd; color: white; margin-left: auto; border-bottom-right-radius: 2px; }
         .msg-assistant { background-color: #ffffff; color: #212529; margin-right: auto; border-bottom-left-radius: 2px; border: 1px solid #e9ecef; }
         
+        /* ESTILO ESPECIAL PARA TRANSFERENCIA */
+        .msg-transfer { 
+            background-color: #fff3cd !important; 
+            color: #856404 !important; 
+            border: 1px solid #ffeeba !important;
+            margin-right: auto; 
+            margin-left: auto; 
+            text-align: center;
+            max-width: 90%;
+            border-radius: 15px !important;
+        }
+
         .msg-time { font-size: 0.7rem; text-align: right; margin-top: 5px; opacity: 0.7; display: block; }
         .msg-user .msg-time { color: #e0e0e0; }
         .msg-assistant .msg-time { color: #6c757d; }
+        .msg-transfer .msg-time { color: #856404; }
 
         /* ETIQUETAS DE TIEMPO INTERMEDIO */
         .response-time-label { 
@@ -102,11 +115,9 @@
                     <?php else: ?>
                         <?php foreach($sessions as $s): ?>
                             <?php 
-                                // Determinar la sesión activa comparando IDs
                                 $isActive = ($selectedSessionId == $s['id']) ? 'active' : '';
                                 $date = date("d/m H:i", strtotime($s['created_at']));
                                 
-                                // Mantener filtros en la URL de navegación
                                 $url = "index.php?page=chat&session_id={$s['id']}&search=" . urlencode($search) . "&sort={$sort}&date={$dateFilter}";
                                 if (isset($_GET['project_id'])) {
                                     $url .= "&project_id=" . urlencode($_GET['project_id']);
@@ -142,9 +153,9 @@
                         $startTimeStr = "N/A";
                         $endTimeStr = "N/A";
                         $totalSeconds = 0;
-                        
                         $avgUserTimeStr = "N/A";
                         $avgBotTimeStr = "N/A";
+                        $transferMessage = null;
 
                         if (!empty($messages)) {
                             $firstMsg = reset($messages);
@@ -163,9 +174,11 @@
                             $totalBotTime = 0;  $countBot = 0;
                             $prevMsg = null;
                             
-                            reset($messages); 
-
                             foreach ($messages as $msg) {
+                                if (!empty($msg['canal'])) {
+                                    $transferMessage = $msg;
+                                }
+
                                 if ($prevMsg) {
                                     $t1 = strtotime($prevMsg['timestamp']);
                                     $t2 = strtotime($msg['timestamp']);
@@ -206,7 +219,7 @@
                     <div class="bg-white border-bottom p-3 shadow-sm" style="min-height: 85px;">
                         <div class="d-flex justify-content-between align-items-start">
                             
-                            <div>
+                            <div class="flex-grow-1">
                                 <h5 class="m-0 d-flex align-items-center">
                                     <i class="fas fa-user-circle text-secondary me-2"></i> 
                                     <?= htmlspecialchars($currentSession['session_id']) ?>
@@ -217,13 +230,30 @@
                                     <span class="mx-2">|</span>
                                     <i class="fas fa-flag-checkered text-danger"></i> Fin: <b><?= $endTimeStr ?></b>
                                 </div>
-                                <div class="text-muted" style="font-size: 0.75rem;">
+                                <div class="text-muted mb-2" style="font-size: 0.75rem;">
                                     Proyecto: <b><?= htmlspecialchars($currentSession['project_id']) ?></b>
                                 </div>
+
+                                <?php if ($transferMessage): ?>
+                                    <div class="card border-warning bg-light shadow-sm mb-2" style="max-width: 95%;">
+                                        <div class="card-body p-2">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-headset"></i> Resumen Transferencia
+                                                </span>
+                                                <small class="text-muted">
+                                                    Canal: <span class="badge bg-secondary"><?= htmlspecialchars($transferMessage['canal']) ?></span>
+                                                </small>
+                                            </div>
+                                            <p class="card-text small mb-0 text-dark italic">
+                                                <?= nl2br(htmlspecialchars($transferMessage['content'])) ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="d-flex flex-column align-items-end gap-1">
-                                
                                 <span class="badge bg-warning text-dark duration-badge p-2 mb-1" 
                                       data-bs-toggle="tooltip" 
                                       data-bs-html="true"
@@ -239,7 +269,6 @@
                                         <i class="fas fa-user text-success"></i> User Avg: <b><?= $avgUserTimeStr ?></b>
                                     </span>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -260,6 +289,14 @@
                                     else $timeDiffStr = "Bot respondió en: $str";
                                 }
                                 $prevTime = $currTime;
+
+                                // LÓGICA DE CLASES PARA LA BURBUJA
+                                $bubbleClass = ($msg['role'] === 'user') ? 'msg-user' : 'msg-assistant';
+                                
+                                // Si tiene 'canal', aplicamos el color especial
+                                if (!empty($msg['canal'])) {
+                                    $bubbleClass = 'msg-transfer';
+                                }
                         ?>
                             <?php if($timeDiffStr): ?>
                                 <span class="response-time-label">
@@ -268,9 +305,11 @@
                                 </span>
                             <?php endif; ?>
 
-                            <div class="message-bubble <?= ($msg['role'] === 'user') ? 'msg-user' : 'msg-assistant' ?>">
-                                <?php if($msg['role'] === 'assistant'): ?>
+                            <div class="message-bubble <?= $bubbleClass ?>">
+                                <?php if($msg['role'] === 'assistant' && empty($msg['canal'])): ?>
                                     <strong class="d-block text-primary mb-1" style="font-size: 0.8rem;">IA Assistant</strong>
+                                <?php elseif(!empty($msg['canal'])): ?>
+                                    <strong class="d-block mb-1" style="font-size: 0.8rem;"><i class="fas fa-headset"></i> LOG DE TRANSFERENCIA (<?= htmlspecialchars($msg['canal']) ?>)</strong>
                                 <?php endif; ?>
                                 
                                 <?= nl2br(htmlspecialchars($msg['content'])) ?>
@@ -298,11 +337,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Auto-scroll al final del chat
             const target = document.getElementById('scroll-target');
             if(target) target.scrollIntoView({ behavior: "auto" });
 
-            // Inicializar Tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
