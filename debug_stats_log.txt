@@ -1,0 +1,12 @@
+Array
+(
+    [total_sessions] => 243
+    [total_users] => 33
+    [total_cost] => 28008544.00
+    [avg_latency] => 0.0000
+    [total_messages] => 3122
+    [msg_user] => 1163
+    [msg_agent] => 1953
+    [total_transferencias] => 7
+    [total_tickets] => 3
+)

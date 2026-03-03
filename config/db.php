@@ -1,17 +1,19 @@
 <?php
 class Database {
-     private $host = "localhost";
-     private $port = "3307";
-     private $db_name = "voiceFlow";
-     private $username = "root";
-     private $password = "";
-     public $conn;
+    // Credenciales Locales WAMP
     // private $host = "localhost";
-    // private $port = "3306";
-    // private $db_name = "voiceflow";
+    // private $port = "3307";
+    // private $db_name = "voiceFlow";
     // private $username = "root";
-    // private $password = "Melco154.,";
-    // public $conn;
+    // private $password = "";
+    
+    // Credenciales Servidor de Producción
+    private $host = "localhost";
+    private $port = "3306";
+    private $db_name = "voiceflow";
+    private $username = "root";
+    private $password = "Melco154.,";
+    public $conn;
 
     public function getConnection() {
         $this->conn = null;
