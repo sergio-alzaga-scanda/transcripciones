@@ -29,7 +29,6 @@ class MainController {
         $projectId = $this->getFilterProject();
         
         $stats = $this->metricsModel->getStats($projectId);
-        file_put_contents(dirname(__DIR__) . '/debug_stats_log.txt', print_r($stats, true));
         
         $chartDataRaw = $this->metricsModel->getDailyTrend($projectId);
         $chartLabels = [];
