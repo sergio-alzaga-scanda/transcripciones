@@ -29,6 +29,7 @@ class MainController {
         $projectId = $this->getFilterProject();
         
         $stats = $this->metricsModel->getStats($projectId);
+        file_put_contents(dirname(__DIR__) . '/debug_stats_log.txt', print_r($stats, true));
         
         $chartDataRaw = $this->metricsModel->getDailyTrend($projectId);
         $chartLabels = [];
@@ -42,6 +43,10 @@ class MainController {
         $topConversations = $this->metricsModel->getTopLongestSessions($projectId);
 
         $projects = $this->metricsModel->getProjects(); 
+
+        // Listas para modales de detalle
+        $transferenciasList = $this->metricsModel->getTransferenciasList($projectId);
+        $ticketsList        = $this->metricsModel->getTicketsList($projectId);
         
         $triggerAutoSync = false;
         if (isset($_SESSION['trigger_sync']) && $_SESSION['trigger_sync'] === true) {
@@ -93,9 +98,10 @@ class MainController {
         $search = $_GET['search'] ?? '';
         $sort = $_GET['sort'] ?? 'DESC'; 
         $dateFilter = $_GET['date'] ?? ''; 
+        $filterType = $_GET['estado'] ?? '';
         
         // 1. Obtener sesiones
-        $sessions = $this->convModel->getSessions($projectId, $search, $sort, $dateFilter);
+        $sessions = $this->convModel->getSessions($projectId, $search, $sort, $dateFilter, $filterType);
         
         // 2. Obtener lista de proyectos
         $projects = [];
@@ -107,10 +113,12 @@ class MainController {
         $selectedSessionId = $_GET['session_id'] ?? null;
         $messages = [];
         $currentSession = null;
+        $comentario = null;
 
         if ($selectedSessionId) {
             $this->convModel->markAsRead($selectedSessionId);
             $messages = $this->convModel->getMessages($selectedSessionId);
+            $comentario = $this->convModel->getComentario($selectedSessionId);
             
             foreach($sessions as &$s) {
                 // Usar == en lugar de === para prevenir fallos por tipos de datos (string vs int)

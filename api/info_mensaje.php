@@ -22,6 +22,7 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $take = $_GET['take'] ?? 100;
 $project_id = $_GET['id_project'] ?? null;
 $api_key = $_GET['api_key'] ?? null;
+$nombre_proyecto = !empty($_GET['nombre_proyecto']) ? $_GET['nombre_proyecto'] : null;
 $server_url = "https://proy020.kenos-atom.com/reimpresion/analyze-project";
 
 if (!$project_id || !$api_key) {
@@ -37,7 +38,7 @@ function format_date_with_offset($iso_str) {
     if (!$iso_str) return null;
     try {
         $date = new DateTime($iso_str);
-        $date->modify('-6 hours');
+        // $date->modify('-6 hours');
         return $date->format('Y-m-d H:i:s');
     } catch (Exception $e) {
         return null;
@@ -46,12 +47,19 @@ function format_date_with_offset($iso_str) {
 
 try {
     // 3. Gestionar Configuración del Proyecto
-    $stmt = $db->prepare("SELECT project_id FROM projects_config WHERE project_id = ?");
+    $stmt = $db->prepare("SELECT project_id, nombre_proyecto FROM projects_config WHERE project_id = ?");
     $stmt->execute([$project_id]);
+    $existingProject = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if (!$stmt->fetch()) {
-        $stmt = $db->prepare("INSERT INTO projects_config (project_id, api_key) VALUES (?, ?)");
-        $stmt->execute([$project_id, $api_key]);
+    if (!$existingProject) {
+        $stmtIns = $db->prepare("INSERT INTO projects_config (project_id, api_key, nombre_proyecto) VALUES (?, ?, ?)");
+        $stmtIns->execute([$project_id, $api_key, $nombre_proyecto]);
+    } else {
+        // Actualizar el nombre si se envió y es diferente
+        if ($nombre_proyecto && $existingProject['nombre_proyecto'] !== $nombre_proyecto) {
+            $stmtUpd = $db->prepare("UPDATE projects_config SET api_key = ?, nombre_proyecto = ? WHERE project_id = ?");
+            $stmtUpd->execute([$api_key, $nombre_proyecto, $project_id]);
+        }
     }
 
     // 4. Consumir el servidor de análisis
@@ -133,7 +141,8 @@ try {
 
         // --- PROCESAR MENSAJES ---
         // Limpiamos mensajes para evitar duplicados y volvemos a insertar el historial completo
-        $del_msg = $db->prepare("DELETE FROM messages WHERE session_table_id = ?");
+        // IMPORTANTE: Los mensajes con role='tranferencia' NO se eliminan (son registros manuales)
+        $del_msg = $db->prepare("DELETE FROM messages WHERE session_table_id = ? AND role != 'tranferencia'");
         $del_msg->execute([$vf_id]);
 
         $sql_msg = "INSERT INTO messages (session_table_id, role, content, timestamp) VALUES (?, ?, ?, ?)";

@@ -87,7 +87,7 @@ try {
     $contenido =  ($resumen ?? "Sin resumen");
     
     $insertQuery = "INSERT INTO messages (session_table_id, role, content, timestamp, transferencia, canal) 
-                    VALUES (:session, 'assistant', :content, NOW(), 1, :canal)";
+                    VALUES (:session, 'tranferencia', :content, NOW(), 1, :canal)";
     
     escribir_log("Intentando insertar en base de datos. Query: $insertQuery");
     
@@ -98,7 +98,20 @@ try {
         ':canal'   => $canal
     ]);
 
-    escribir_log("Inserción exitosa en la base de datos.");
+    escribir_log("Inserción exitosa en la tabla messages.");
+
+    // 7. Registro adicional en tabla 'tranferencias'
+    $insertTransf = "INSERT INTO tranferencias (session_table_id, canal, resumen, project_id, created_at)
+                     VALUES (:session, :canal, :resumen, :project_id, NOW())";
+    $stmtTransf = $db->prepare($insertTransf);
+    $stmtTransf->execute([
+        ':session'    => $session_id,
+        ':canal'      => $canal,
+        ':resumen'    => $contenido,
+        ':project_id' => $project_id
+    ]);
+
+    escribir_log("Inserción exitosa en la tabla tranferencias.");
 
     echo json_encode([
         "status" => "success",

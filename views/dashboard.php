@@ -39,7 +39,7 @@ try {
     $allProjects = $stmtAll->fetchAll(PDO::FETCH_ASSOC);
 
     // Para la tabla de configuración técnica
-    $queryProj = "SELECT project_id, api_key, last_sync FROM projects_config";
+    $queryProj = "SELECT project_id, api_key, nombre_proyecto, last_sync FROM projects_config";
     if ($userRole !== 'admin') {
         $queryProj .= " WHERE project_id = :assigned_id";
     }
@@ -166,21 +166,25 @@ try {
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-white fw-bold"><i class="fas fa-plus-circle"></i> Registro Técnico de Proyectos</div>
             <div class="card-body">
-                <div class="row g-3">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label class="small fw-bold">Nombre del Proyecto</label>
+                        <input type="text" id="syncProjectName" class="form-control" placeholder="Ej: VF DEMO">
+                    </div>
                     <div class="col-md-3">
                         <label class="small fw-bold">ID Proyecto (Voiceflow)</label>
                         <input type="text" id="syncProjectId" class="form-control" placeholder="ID del proyecto">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="small fw-bold">API Key</label>
                         <input type="password" id="syncApiKey" class="form-control" placeholder="VF.DM.XXXXXXX">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <label class="small fw-bold">Registros</label>
                         <input type="number" id="syncTake" class="form-control" value="100" min="1">
                     </div>
-                    <div class="col-md-3 d-flex align-items-end">
-                        <button class="btn btn-primary w-100" id="btnSync">Registrar y Sincronizar</button>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="btnSync"><i class="fas fa-save"></i> Registrar</button>
                     </div>
                 </div>
             </div>
@@ -201,7 +205,7 @@ try {
                         <option value=""> Todos los proyectos</option>
                         <?php foreach ($allProjects as $p): ?>
                             <option value="<?= $p['project_id'] ?>" <?= ($p['project_id'] == ($currentFilterId ?? '')) ? 'selected' : '' ?>>
-                                 <?= $p['project_id'] ?>
+                                 <?= htmlspecialchars($p['nombre_proyecto'] ?? $p['project_id']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -223,20 +227,23 @@ try {
                             <?php foreach($projectsConfig as $pc): ?>
                             <tr>
                                 <td>
-                                    <span class="badge bg-light text-dark border p-2">
-                                        <i class="fas fa-fingerprint text-muted"></i> 
-                                        <?= htmlspecialchars($pc['project_id']) ?>
+                                    <div class="fw-bold mb-1">
+                                        <i class="fas fa-project-diagram text-primary"></i> 
+                                        <?= htmlspecialchars($pc['nombre_proyecto'] ?? $pc['project_id']) ?>
+                                    </div>
+                                    <span class="badge bg-light text-dark border p-1" style="font-size:0.65em;" title="ID Proyecto">
+                                        ID: <?= htmlspecialchars($pc['project_id']) ?>
                                     </span>
                                 </td>
                                 <td>
                                     <small class="text-muted">
                                         <i class="far fa-clock"></i> 
-                                        <?= $pc['last_sync'] ? date("d/m/Y H:i", strtotime($pc['last_sync'] . " -6 hours")) : 'Sin sincronizar' ?>
+                                        <?= $pc['last_sync'] ? date("d/m/Y H:i", strtotime($pc['last_sync'] . " -0 hours")) : 'Sin sincronizar' ?>
                                     </small>
                                 </td>
                                 <td class="text-center">
                                     <button class="btn btn-sm btn-success px-3" 
-                                            onclick="syncProjectManual('<?= $pc['project_id'] ?>', '<?= $pc['api_key'] ?>')">
+                                            onclick="syncProjectManual('<?= $pc['project_id'] ?>', '<?= $pc['api_key'] ?>', '<?= htmlspecialchars($pc['nombre_proyecto'] ?? '') ?>')">
                                         <i class="fas fa-sync-alt"></i> Actualizar Datos
                                     </button>
                                 </td>
@@ -257,7 +264,7 @@ try {
         </div>
 
         <div class="row g-3 mb-4">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">T. Prom. Respuesta</h6>
@@ -266,7 +273,7 @@ try {
                 </div>
             </div>
             
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-info">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Mensajes Totales</h6>
@@ -279,7 +286,7 @@ try {
                 </div>
             </div>
             
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-success clickable-card" id="btnShowUsers">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Usuarios Únicos</h6>
@@ -289,12 +296,32 @@ try {
                 </div>
             </div>
             
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary clickable-card" onclick="window.location.href='index.php?page=chat'">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Sesiones Totales</h6>
                         <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_sessions']) ?></h3>
                         <small class="text-primary">Ir al historial <i class="fas fa-arrow-right"></i></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm h-100 border-start border-4 clickable-card" style="border-color:#fd7e14!important;" id="btnShowTransferencias">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase mb-2 small">Transferencias</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_transferencias'] ?? 0) ?></h3>
+                        <small class="text-warning">Ver detalle <i class="fas fa-arrow-right"></i></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm h-100 border-start border-4 border-danger clickable-card" id="btnShowTickets">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase mb-2 small">Tickets Creados</h6>
+                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_tickets'] ?? 0) ?></h3>
+                        <small class="text-danger">Ver detalle <i class="fas fa-arrow-right"></i></small>
                     </div>
                 </div>
             </div>
@@ -333,6 +360,80 @@ try {
                         <div style="height: 350px;">
                             <canvas id="dailyChart"></canvas>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Transferencias -->
+    <div class="modal fade" id="transfModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-warning bg-opacity-10">
+                    <h5 class="modal-title"><i class="fas fa-headset text-warning"></i> Transferencias Registradas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm align-middle">
+                            <thead class="table-light">
+                                <tr><th>#</th><th>Sesión</th><th>Canal</th><th>Proyecto</th><th>Resumen</th><th>Fecha</th></tr>
+                            </thead>
+                            <tbody>
+                                <?php if(!empty($transferenciasList)): ?>
+                                    <?php foreach($transferenciasList as $tr): ?>
+                                    <tr>
+                                        <td><small><?= $tr['id'] ?></small></td>
+                                        <td><small class="fw-bold"><?= htmlspecialchars($tr['session_id'] ?? $tr['session_table_id']) ?></small></td>
+                                        <td><span class="badge bg-warning text-dark"><?= htmlspecialchars($tr['canal'] ?? 'N/A') ?></span></td>
+                                        <td><small><?= htmlspecialchars($tr['nombre_proyecto'] ?? '') ?></small></td>
+                                        <td><small class="text-truncate d-block" style="max-width:250px"><?= htmlspecialchars($tr['resumen'] ?? '') ?></small></td>
+                                        <td><small><?= date('d/m/Y H:i', strtotime($tr['created_at'])) ?></small></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr><td colspan="6" class="text-center text-muted py-3">Sin transferencias registradas</td></tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tickets -->
+    <div class="modal fade" id="ticketsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-danger bg-opacity-10">
+                    <h5 class="modal-title"><i class="fas fa-ticket-alt text-danger"></i> Tickets Registrados</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm align-middle">
+                            <thead class="table-light">
+                                <tr><th>#</th><th>No. Ticket</th><th>Proyecto</th><th>Usuario</th><th>ID Sesión</th><th>Fecha</th></tr>
+                            </thead>
+                            <tbody>
+                                <?php if(!empty($ticketsList)): ?>
+                                    <?php foreach($ticketsList as $tk): ?>
+                                    <tr>
+                                        <td><small><?= $tk['id'] ?></small></td>
+                                        <td><span class="badge bg-danger"><?= htmlspecialchars($tk['numero_ticket']) ?></span></td>
+                                        <td><small><?= htmlspecialchars($tk['nombre_proyecto'] ?? '') ?></small></td>
+                                        <td><small><?= htmlspecialchars($tk['usuario'] ?? '') ?></small></td>
+                                        <td><small class="text-muted"><?= htmlspecialchars($tk['id_sesion'] ?? '') ?></small></td>
+                                        <td><small><?= date('d/m/Y H:i', strtotime($tk['created_at'])) ?></small></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr><td colspan="6" class="text-center text-muted py-3">Sin tickets registrados</td></tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -419,6 +520,16 @@ try {
                     renderChart(response.labels, response.values); 
                 }
             });
+        });
+
+        // Transferencias Modal
+        $('#btnShowTransferencias').click(function() {
+            $('#transfModal').modal('show');
+        });
+
+        // Tickets Modal
+        $('#btnShowTickets').click(function() {
+            $('#ticketsModal').modal('show');
         });
 
         // AJAX USERS

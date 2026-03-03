@@ -7,12 +7,14 @@ document.addEventListener("DOMContentLoaded", function () {
       const takeInput = document.getElementById("syncTake");
       const projectInput = document.getElementById("syncProjectId");
       const apiKeyInput = document.getElementById("syncApiKey");
+      const nameInput = document.getElementById("syncProjectName");
 
       const take = takeInput ? takeInput.value : 100;
       const projectId = projectInput ? projectInput.value : "";
       const apiKey = apiKeyInput ? apiKeyInput.value : "";
+      const projectName = nameInput ? nameInput.value : "";
 
-      ejecutarSincronizacion(projectId, apiKey, take);
+      ejecutarSincronizacion(projectId, apiKey, take, projectName);
     });
   }
 });
@@ -20,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
 /**
  * Función centralizada que hace la petición y maneja las alertas con SweetAlert2
  */
-function ejecutarSincronizacion(projectId, apiKey, take = 100) {
+function ejecutarSincronizacion(projectId, apiKey, take = 100, projectName = "") {
   // 1. Validaciones
   if (!projectId || !apiKey) {
     Swal.fire({
@@ -44,7 +46,10 @@ function ejecutarSincronizacion(projectId, apiKey, take = 100) {
   });
 
   // 3. Petición Fetch
-  const apiUrl = `http://158.23.137.150:8085/api/info_mensaje.php?take=${take}&id_project=${projectId}&api_key=${apiKey}`;
+  let apiUrl = `http://158.23.137.150:8085/api/info_mensaje.php?take=${take}&id_project=${projectId}&api_key=${apiKey}`;
+  if (projectName) {
+      apiUrl += `&nombre_proyecto=${encodeURIComponent(projectName)}`;
+  }
 
   fetch(apiUrl)
     .then((response) => {
@@ -97,19 +102,21 @@ function ejecutarSincronizacion(projectId, apiKey, take = 100) {
 /**
  * Esta función es la que se llama desde los botones verdes de la tabla.
  */
-function syncProjectManual(id, key) {
+function syncProjectManual(id, key, name = "") {
   // Ya no necesitamos hacer scroll suave hacia arriba ni usar setTimeout.
   // SweetAlert va a aparecer directo en medio de la pantalla tapando todo.
 
   // Opcional: llenar los inputs de arriba si el usuario es Admin y los inputs existen
   const inputId = document.getElementById("syncProjectId");
   const inputKey = document.getElementById("syncApiKey");
+  const inputName = document.getElementById("syncProjectName");
 
   if (inputId && inputKey) {
     inputId.value = id;
     inputKey.value = key;
+    if (inputName) inputName.value = name;
   }
 
   // Lanzar la sincronización directa a la API
-  ejecutarSincronizacion(id, key, 100);
+  ejecutarSincronizacion(id, key, 100, name);
 }

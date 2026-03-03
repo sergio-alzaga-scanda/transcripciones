@@ -14,6 +14,7 @@
         .session-item { cursor: pointer; border-left: 4px solid transparent; transition: all 0.2s; position: relative; }
         .session-item:hover { background-color: #f8f9fa; }
         .session-item.active { background-color: #e8f0fe; border-left-color: #0d6efd; }
+        .session-item.transfer-active { border-left-color: #fd7e14 !important; }
 
         /* CHAT AREA */
         .chat-area { background-color: #f4f6f8; height: 100%; display: flex; flex-direction: column; }
@@ -22,38 +23,52 @@
         /* BURBUJAS */
         .message-bubble { 
             max-width: 75%; padding: 12px 16px; border-radius: 12px; 
-            margin-bottom: 5px; position: relative; font-size: 0.95rem; 
+            margin-bottom: 3px; position: relative; font-size: 0.95rem; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.05); line-height: 1.5; 
         }
-        .msg-user { background-color: #0d6efd; color: white; margin-left: auto; border-bottom-right-radius: 2px; }
-        .msg-assistant { background-color: #ffffff; color: #212529; margin-right: auto; border-bottom-left-radius: 2px; border: 1px solid #e9ecef; }
+        .msg-user     { background-color: #0d6efd; color: white;   margin-left: auto;  border-bottom-right-radius: 2px; }
+        .msg-assistant{ background-color: #ffffff;  color: #212529; margin-right: auto; border-bottom-left-radius: 2px; border: 1px solid #e9ecef; }
         
-        /* ESTILO ESPECIAL PARA TRANSFERENCIA */
+        /* TRANSFERENCIA */
         .msg-transfer { 
-            background-color: #fff3cd !important; 
-            color: #856404 !important; 
+            background-color: #fff3cd !important; color: #856404 !important; 
             border: 1px solid #ffeeba !important;
-            margin-right: auto; 
-            margin-left: auto; 
-            text-align: center;
-            max-width: 90%;
-            border-radius: 15px !important;
+            margin-right: auto; margin-left: auto; text-align: center;
+            max-width: 90%; border-radius: 15px !important;
         }
 
         .msg-time { font-size: 0.7rem; text-align: right; margin-top: 5px; opacity: 0.7; display: block; }
-        .msg-user .msg-time { color: #e0e0e0; }
-        .msg-assistant .msg-time { color: #6c757d; }
+        .msg-user .msg-time     { color: #e0e0e0; }
+        .msg-assistant .msg-time{ color: #6c757d; }
         .msg-transfer .msg-time { color: #856404; }
 
-        /* ETIQUETAS DE TIEMPO INTERMEDIO */
-        .response-time-label { 
-            font-size: 0.65rem; color: #888; margin-bottom: 15px; 
-            text-align: center; display: block; font-style: italic; 
+        /* ETIQUETA DE TIEMPO -- PEGADA AL MENSAJE */
+        .response-time-label {
+            font-size: 0.65rem; color: #aaa;
+            display: block; font-style: italic;
+            margin-bottom: 2px;
         }
+        .response-time-label.side-user  { text-align: right; }
+        .response-time-label.side-bot   { text-align: left;  }
         
         /* BADGE DE DURACIÓN */
         .duration-badge { cursor: help; transition: transform 0.2s; }
         .duration-badge:hover { transform: scale(1.1); }
+
+        /* COMENTARIO */
+        .comentario-box {
+            background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;
+            padding: 12px 16px; margin: 12px 20px;
+        }
+        .comentario-box .label-coment { font-size: 0.75rem; font-weight: 700; color: #495057; }
+
+        /* BADGE TRANSFERENCIA ACTIVA EN SIDEBAR */
+        .badge-transf-activa {
+            background: #fd7e14; color: white;
+            font-size: 0.6rem; border-radius: 20px; padding: 2px 7px;
+            vertical-align: middle; animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
     </style>
 </head>
 <body class="bg-light">
@@ -63,8 +78,9 @@
     <div class="container-fluid chat-layout">
         <div class="row h-100 g-0 border rounded shadow-sm overflow-hidden">
             
+            <!-- ========== SIDEBAR ========== -->
             <div class="col-md-4 col-lg-3 sidebar-container">
-                <div class="p-3 border-bottom bg-light sticky-top">
+                <div class="p-3 border-bottom bg-light sticky-top" id="filterPanel">
                     
                     <form method="GET" action="index.php" id="filterForm">
                         <input type="hidden" name="page" value="chat">
@@ -75,7 +91,7 @@
                                     <option value="">Todos los Proyectos</option>
                                     <?php foreach ($projects as $p): ?>
                                         <option value="<?= htmlspecialchars($p['project_id']) ?>" <?= (isset($_GET['project_id']) && $_GET['project_id'] == $p['project_id']) ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($p['project_id']) ?>
+                                            <?= htmlspecialchars($p['nombre_proyecto'] ?? $p['project_id']) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -95,58 +111,46 @@
                             <?php endif; ?>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <small class="text-muted fw-bold me-2">Orden:</small>
                             <select name="sort" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit()">
-                                <option value="DESC" <?= ($sort == 'DESC') ? 'selected' : '' ?>>🔄 Más Recientes</option>
-                                <option value="ASC" <?= ($sort == 'ASC') ? 'selected' : '' ?>>📅 Más Antiguos</option>
-                                <option value="MSG_DESC" <?= ($sort == 'MSG_DESC') ? 'selected' : '' ?>>💬 Mayor N° Mensajes</option>
+                                <option value="DESC"    <?= ($sort == 'DESC')     ? 'selected' : '' ?>>🔄 Más Recientes</option>
+                                <option value="ASC"     <?= ($sort == 'ASC')      ? 'selected' : '' ?>>📅 Más Antiguos</option>
+                                <option value="MSG_DESC"<?= ($sort == 'MSG_DESC') ? 'selected' : '' ?>>💬 Mayor N° Mensajes</option>
                             </select>
                         </div>
+
+                        <!-- NUEVO FILTRO: Estado (Transferidas/Tickets) -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted fw-bold me-2">Filtro:</small>
+                            <select name="estado" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit()">
+                                <option value="" <?= ($filterType == '') ? 'selected' : '' ?>>Todas</option>
+                                <option value="con_ticket" <?= ($filterType == 'con_ticket') ? 'selected' : '' ?>>🎟️ Con Ticket</option>
+                                <option value="transferidas_activas" <?= ($filterType == 'transferidas_activas') ? 'selected' : '' ?>>🎧 Transferidas Activas</option>
+                                <option value="transferidas_todas" <?= ($filterType == 'transferidas_todas') ? 'selected' : '' ?>>🎧 Todas las Transferidas</option>
+                            </select>
+                        </div>
+
                     </form>
+
+                    <!-- Indicador de auto-refresh -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <small class="text-muted fst-italic"><i class="fas fa-sync-alt fa-spin" id="refreshIcon" style="display:none"></i> 
+                            <span id="refreshCountdown">Actualiza en <b id="countdownVal">120</b>s</span>
+                        </small>
+                        <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="refreshSidebar()" title="Actualizar ahora">
+                            <i class="fas fa-sync-alt" style="font-size:0.75rem"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="list-group list-group-flush">
-                    <?php if (empty($sessions)): ?>
-                        <div class="p-4 text-center text-muted">
-                            <i class="fas fa-filter fa-2x mb-2 opacity-50"></i><br>
-                            Sin resultados.
-                        </div>
-                    <?php else: ?>
-                        <?php foreach($sessions as $s): ?>
-                            <?php 
-                                $isActive = ($selectedSessionId == $s['id']) ? 'active' : '';
-                                $date = date("d/m H:i", strtotime($s['created_at']));
-                                
-                                $url = "index.php?page=chat&session_id={$s['id']}&search=" . urlencode($search) . "&sort={$sort}&date={$dateFilter}";
-                                if (isset($_GET['project_id'])) {
-                                    $url .= "&project_id=" . urlencode($_GET['project_id']);
-                                }
-                            ?>
-                            <a href="<?= $url ?>" class="list-group-item list-group-item-action session-item <?= $isActive ?>">
-                                
-                                <div class="d-flex w-100 justify-content-between align-items-center">
-                                    <h6 class="mb-1 text-truncate fw-bold" style="max-width: 60%;">
-                                        <?= htmlspecialchars($s['session_id']) ?>
-                                    </h6>
-                                    <small class="<?= $isActive ? 'text-primary' : 'text-muted' ?>" style="font-size: 0.75rem;"><?= $date ?></small>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between align-items-center mt-1">
-                                    <p class="mb-0 small text-truncate <?= $isActive ? 'text-dark' : 'text-muted' ?>" style="max-width: 70%;">
-                                        <i class="fas fa-robot"></i> <?= htmlspecialchars($s['model_used']) ?>
-                                    </p>
-                                    
-                                    <span class="badge <?= $isActive ? 'bg-primary text-white' : 'bg-light text-muted border' ?> rounded-pill" style="font-size: 0.7em;">
-                                        <?= $s['msg_count'] ?> <i class="fas fa-comment"></i>
-                                    </span>
-                                </div>
-                            </a>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                <!-- LISTA DE SESIONES (se actualiza con AJAX) -->
+                <div class="list-group list-group-flush" id="sessionList">
+                    <?php include dirname(__DIR__) . '/views/partials/session_list.php'; ?>
                 </div>
             </div>
 
+            <!-- ========== CHAT AREA ========== -->
             <div class="col-md-8 col-lg-9 chat-area">
                 <?php if ($currentSession): ?>
                     <?php
@@ -279,46 +283,68 @@
                             foreach($messages as $msg): 
                                 $currTime = strtotime($msg['timestamp']);
                                 $timeDiffStr = '';
+                                $isUser = ($msg['role'] === 'user');
+                                $isTransfer = !empty($msg['canal']);
                                 
                                 if ($prevTime !== null) {
                                     $diff = $currTime - $prevTime;
                                     if ($diff < 60) $str = $diff . "s";
                                     else $str = floor($diff / 60) . "m " . ($diff % 60) . "s";
 
-                                    if ($msg['role'] === 'user') $timeDiffStr = "Usuario respondió en: $str";
-                                    else $timeDiffStr = "Bot respondió en: $str";
+                                    if ($isUser) $timeDiffStr = '<i class="fas fa-user-clock"></i> Usuario respondió en: ' . $str;
+                                    elseif (!$isTransfer) $timeDiffStr = '<i class="fas fa-robot"></i> Bot respondió en: ' . $str;
                                 }
                                 $prevTime = $currTime;
 
-                                // LÓGICA DE CLASES PARA LA BURBUJA
-                                $bubbleClass = ($msg['role'] === 'user') ? 'msg-user' : 'msg-assistant';
-                                
-                                // Si tiene 'canal', aplicamos el color especial
-                                if (!empty($msg['canal'])) {
+                                // Clase de burbuja
+                                if ($isTransfer) {
                                     $bubbleClass = 'msg-transfer';
+                                } elseif ($isUser) {
+                                    $bubbleClass = 'msg-user';
+                                } else {
+                                    $bubbleClass = 'msg-assistant';
                                 }
+
+                                // Posición del label de tiempo
+                                $timeLabelClass = $isUser ? 'side-user' : 'side-bot';
                         ?>
-                            <?php if($timeDiffStr): ?>
-                                <span class="response-time-label">
-                                    <?= ($msg['role'] === 'user') ? '<i class="fas fa-user-clock"></i>' : '<i class="fas fa-robot"></i>' ?> 
+                            <?php if($timeDiffStr && !$isTransfer): ?>
+                                <span class="response-time-label <?= $timeLabelClass ?>">
                                     <?= $timeDiffStr ?>
                                 </span>
                             <?php endif; ?>
 
                             <div class="message-bubble <?= $bubbleClass ?>">
-                                <?php if($msg['role'] === 'assistant' && empty($msg['canal'])): ?>
+                                <?php if($msg['role'] === 'assistant' && !$isTransfer): ?>
                                     <strong class="d-block text-primary mb-1" style="font-size: 0.8rem;">IA Assistant</strong>
-                                <?php elseif(!empty($msg['canal'])): ?>
+                                <?php elseif($isTransfer): ?>
                                     <strong class="d-block mb-1" style="font-size: 0.8rem;"><i class="fas fa-headset"></i> LOG DE TRANSFERENCIA (<?= htmlspecialchars($msg['canal']) ?>)</strong>
                                 <?php endif; ?>
                                 
                                 <?= nl2br(htmlspecialchars($msg['content'])) ?>
                                 
-                                <span class="msg-time"><?= date("H:i:s", strtotime("-6 hours", $currTime)) ?></span>
+                                <span class="msg-time"><?= date("H:i:s") ?></span>
                             </div>
                         <?php endforeach; ?>
                         
                         <div id="scroll-target"></div>
+                    </div>
+
+                    <!-- ========== COMENTARIO ========== -->
+                    <div class="comentario-box">
+                        <?php if ($comentario): ?>
+                            <div class="label-coment mb-1"><i class="fas fa-comment-dots text-secondary"></i> Comentario del operador</div>
+                            <p class="mb-0 small text-dark"><?= nl2br(htmlspecialchars($comentario['comentario'])) ?></p>
+                            <small class="text-muted"><?= date('d/m/Y H:i', strtotime($comentario['created_at'])) ?></small>
+                        <?php else: ?>
+                            <div class="label-coment mb-2"><i class="fas fa-comment-medical text-secondary"></i> Agregar comentario</div>
+                            <textarea id="inputComentario" class="form-control form-control-sm mb-2" rows="2" 
+                                      placeholder="Escribe un comentario sobre esta conversación..." maxlength="1000"></textarea>
+                            <button class="btn btn-sm btn-primary" id="btnGuardarComentario">
+                                <i class="fas fa-save"></i> Guardar comentario
+                            </button>
+                            <span id="comentarioMsg" class="ms-2 small"></span>
+                        <?php endif; ?>
                     </div>
 
                 <?php else: ?>
@@ -336,15 +362,79 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // --- Scroll al final ---
         document.addEventListener("DOMContentLoaded", function() {
             const target = document.getElementById('scroll-target');
             if(target) target.scrollIntoView({ behavior: "auto" });
 
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl)
-            })
+            tooltipTriggerList.map(function(el){ return new bootstrap.Tooltip(el); });
         });
+
+        // --- Guardar comentario AJAX ---
+        <?php if ($currentSession && !$comentario): ?>
+        document.getElementById('btnGuardarComentario')?.addEventListener('click', function() {
+            const comentario = document.getElementById('inputComentario').value.trim();
+            const sessionId  = '<?= htmlspecialchars($currentSession['id']) ?>';
+            const msgEl      = document.getElementById('comentarioMsg');
+
+            if (!comentario) { msgEl.textContent = 'El comentario no puede estar vacío.'; msgEl.className = 'ms-2 small text-danger'; return; }
+
+            const fd = new FormData();
+            fd.append('session_id', sessionId);
+            fd.append('comentario', comentario);
+
+            fetch('api/guardar_comentario.php', { method: 'POST', body: fd })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        msgEl.textContent = '✅ Guardado correctamente';
+                        msgEl.className = 'ms-2 small text-success';
+                        document.getElementById('btnGuardarComentario').disabled = true;
+                        document.getElementById('inputComentario').disabled = true;
+                    } else {
+                        msgEl.textContent = '⚠ ' + (data.message || 'Error al guardar');
+                        msgEl.className = 'ms-2 small text-danger';
+                    }
+                })
+                .catch(() => { msgEl.textContent = 'Error de conexión'; msgEl.className = 'ms-2 small text-danger'; });
+        });
+        <?php endif; ?>
+
+        // --- Auto-refresh del listado (cada 120 segundos) ---
+        let countdown = 120;
+        const countdownEl = document.getElementById('countdownVal');
+        const refreshIconEl = document.getElementById('refreshIcon');
+
+        function refreshSidebar() {
+            refreshIconEl.style.display = 'inline-block';
+            const params = new URLSearchParams(window.location.search);
+            params.set('_ajax_list', '1');
+
+            fetch('index.php?' + params.toString())
+                .then(r => r.text())
+                .then(html => {
+                    // Extraer solo el #sessionList del HTML devuelto
+                    const parser = new DOMParser();
+                    const doc    = parser.parseFromString(html, 'text/html');
+                    const newList = doc.getElementById('sessionList');
+                    if (newList) {
+                        document.getElementById('sessionList').innerHTML = newList.innerHTML;
+                    }
+                    countdown = 120;
+                    refreshIconEl.style.display = 'none';
+                })
+                .catch(() => { refreshIconEl.style.display = 'none'; });
+        }
+
+        setInterval(function() {
+            countdown--;
+            if (countdownEl) countdownEl.textContent = countdown;
+            if (countdown <= 0) {
+                countdown = 120;
+                refreshSidebar();
+            }
+        }, 1000);
     </script>
 </body>
 
