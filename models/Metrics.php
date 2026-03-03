@@ -135,10 +135,10 @@ class Metrics {
 
     // ---- Tickets ----
     public function getTicketsList($project_id = null) {
-        $where = $project_id ? " WHERE tk.proyecto = :pid " : "";
-        $sql = "SELECT tk.*, COALESCE(pc.nombre_proyecto, tk.proyecto) as nombre_proyecto 
+        $where = $project_id ? " WHERE tk.nombre_proyecto = :pid " : "";
+        $sql = "SELECT tk.*, COALESCE(pc.nombre_proyecto, tk.nombre_proyecto) as nombre_proyecto 
                 FROM tickets tk
-                LEFT JOIN projects_config pc ON tk.proyecto COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
+                LEFT JOIN projects_config pc ON tk.nombre_proyecto COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
                 $where
                 ORDER BY tk.created_at DESC LIMIT 200";
         $stmt = $this->conn->prepare($sql);
