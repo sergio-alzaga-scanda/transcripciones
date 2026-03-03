@@ -117,11 +117,11 @@ class Metrics {
 
     // ---- Transferencias ----
     public function getTransferenciasList($project_id = null) {
-        $where = $project_id ? " WHERE t.project_id = :pid " : "";
-        $sql = "SELECT t.*, s.session_id, COALESCE(pc.nombre_proyecto, t.project_id) as nombre_proyecto 
+        $where = $project_id ? " WHERE t.nombre_proyecto = :pid " : "";
+        $sql = "SELECT t.*, s.session_id, COALESCE(pc.nombre_proyecto, t.nombre_proyecto) as nombre_proyecto 
                 FROM tranferencias t
                 LEFT JOIN sessions s ON t.session_table_id COLLATE utf8mb4_general_ci = s.id COLLATE utf8mb4_general_ci
-                LEFT JOIN projects_config pc ON t.project_id COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
+                LEFT JOIN projects_config pc ON t.nombre_proyecto COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
                 $where
                 ORDER BY t.created_at DESC LIMIT 200";
         $stmt = $this->conn->prepare($sql);
