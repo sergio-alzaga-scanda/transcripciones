@@ -44,7 +44,7 @@ try {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $stmt = $db->prepare(
-        "INSERT INTO tickets (numero_ticket, proyecto, usuario, id_sesion, created_at)
+        "INSERT INTO tickets (numero_ticket, nombre_proyecto, usuario, id_sesion, created_at)
          VALUES (:numero_ticket, :proyecto, :usuario, :id_sesion, NOW())"
     );
     $stmt->execute([
