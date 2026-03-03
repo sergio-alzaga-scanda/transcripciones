@@ -1,17 +1,17 @@
 <?php
 class Database {
+     private $host = "localhost";
+     private $port = "3307";
+     private $db_name = "voiceFlow";
+     private $username = "root";
+     private $password = "";
+     public $conn;
     // private $host = "localhost";
-    // private $port = "3307";
-    // private $db_name = "voiceFlow";
+    // private $port = "3306";
+    // private $db_name = "voiceflow";
     // private $username = "root";
-    // private $password = "";
+    // private $password = "Melco154.,";
     // public $conn;
-    private $host = "localhost";
-    private $port = "3306";
-    private $db_name = "voiceflow";
-    private $username = "root";
-    private $password = "Melco154.,";
-    public $conn;
 
     public function getConnection() {
         $this->conn = null;

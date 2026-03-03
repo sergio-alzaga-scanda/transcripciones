@@ -1,4 +1,8 @@
 <?php
+// MODO DEBUG TEMPORAL PARA VER EL ERROR 500 EN EL SERVIDOR
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 
 require_once 'controllers/AuthController.php';
