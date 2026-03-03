@@ -101,7 +101,7 @@ try {
     escribir_log("Inserción exitosa en la tabla messages.");
 
     // 7. Registro adicional en tabla 'tranferencias'
-    $insertTransf = "INSERT INTO tranferencias (session_table_id, canal, resumen, project_id, created_at)
+    $insertTransf = "INSERT INTO tranferencias (session_table_id, canal, resumen, nombre_proyecto, created_at)
                      VALUES (:session, :canal, :resumen, :project_id, NOW())";
     $stmtTransf = $db->prepare($insertTransf);
     $stmtTransf->execute([

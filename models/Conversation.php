@@ -93,7 +93,7 @@ class Conversation {
     }
 
     public function getComentario($session_id) {
-        $sql = "SELECT comentario, created_at FROM comentarios_conversacion WHERE session_table_id = :sid LIMIT 1";
+        $sql = "SELECT comentario, created_at FROM comentarios WHERE session_table_id = :sid LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':sid', $session_id);
         $stmt->execute();
