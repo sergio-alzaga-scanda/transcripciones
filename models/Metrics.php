@@ -46,7 +46,7 @@ class Metrics {
         $msgs = $stmtMsg->fetch(PDO::FETCH_ASSOC);
 
         // Transferencias
-        $whereTransf = $project_id ? " WHERE t.project_id = :pid" : "";
+        $whereTransf = $project_id ? " WHERE t.nombre_proyecto = :pid" : "";
         $stmtTf = $this->conn->prepare("SELECT COUNT(*) as total_transferencias FROM tranferencias t $whereTransf");
         if ($project_id) {
             $stmtTf->execute([':pid' => $project_id]);
@@ -56,7 +56,7 @@ class Metrics {
         $tf = $stmtTf->fetch(PDO::FETCH_ASSOC);
 
         // Tickets
-        $whereTk = $project_id ? " WHERE tk.proyecto = :pid" : "";
+        $whereTk = $project_id ? " WHERE tk.nombre_proyecto = :pid" : "";
         $stmtTk = $this->conn->prepare("SELECT COUNT(*) as total_tickets FROM tickets tk $whereTk");
         if ($project_id) {
             $stmtTk->execute([':pid' => $project_id]);
