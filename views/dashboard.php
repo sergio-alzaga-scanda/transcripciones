@@ -3,7 +3,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
+var_dump($stats['total_transferencias']);
+$transferencias_d = $stats['total_transferencias'];
+$tickets_d = $stats['total_tickets'];
 require_once 'config/db.php'; 
 
 $database = new Database();
@@ -302,7 +304,7 @@ try {
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary clickable-card" onclick="window.location.href='index.php?page=chat'">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Sesiones Totales</h6>
-                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_sessions']) ?></h3>
+                        <h3 class="mb-0 fw-bold text-dark"><?= $stats['total_sessions'] ?></h3>
                         <small class="text-primary">Ir al historial <i class="fas fa-arrow-right"></i></small>
                     </div>
                 </div>
@@ -312,7 +314,7 @@ try {
                 <div class="card border-0 shadow-sm h-100 border-start border-4 clickable-card" style="border-color:#fd7e14!important;" id="btnShowTransferencias">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Transferencias</h6>
-                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_transferencias'] ?? 0) ?></h3>
+                        <h3 class="mb-0 fw-bold text-dark"><?php echo $transferencias_d;?></h3>
                         <small class="text-warning">Ver detalle <i class="fas fa-arrow-right"></i></small>
                     </div>
                 </div>
@@ -322,7 +324,7 @@ try {
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-danger clickable-card" id="btnShowTickets">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">Tickets Creados</h6>
-                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['total_tickets'] ?? 0) ?></h3>
+                        <h3 class="mb-0 fw-bold text-dark"><?php echo $tickets_d; ?></h3>
                         <small class="text-danger">Ver detalle <i class="fas fa-arrow-right"></i></small>
                     </div>
                 </div>
