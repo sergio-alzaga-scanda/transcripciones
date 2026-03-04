@@ -3,7 +3,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-var_dump($stats['total_transferencias']);
+
 $transferencias_d = $stats['total_transferencias'];
 $tickets_d = $stats['total_tickets'];
 require_once 'config/db.php'; 
@@ -272,7 +272,7 @@ try {
                 <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
                     <div class="card-body">
                         <h6 class="text-muted text-uppercase mb-2 small">T. Prom. Respuesta</h6>
-                        <h3 class="mb-0 fw-bold text-dark"><?= number_format($stats['avg_latency'], 0) ?> <small class="fs-6 text-muted">ms</small></h3>
+                        <h3 class="mb-0 fw-bold text-dark"><?php echo $stats['avg_latency']; ?> <small class="fs-6 text-muted">ms</small></h3>
                     </div>
                 </div>
             </div>
