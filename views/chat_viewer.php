@@ -333,9 +333,12 @@
                     <!-- ========== COMENTARIO ========== -->
                     <div class="comentario-box">
                         <?php if ($comentario): ?>
-                            <div class="label-coment mb-1"><i class="fas fa-comment-dots text-secondary"></i> Comentario del operador</div>
-                            <p class="mb-0 small text-dark"><?= nl2br(htmlspecialchars($comentario['comentario'])) ?></p>
-                            <small class="text-muted"><?= date('d/m/Y H:i', strtotime($comentario['created_at'])) ?></small>
+                            <div class="label-coment mb-2 text-primary fw-bold"><i class="fas fa-comment-dots text-primary"></i> Comentario del operador</div>
+                            <div class="p-2 rounded bg-primary bg-opacity-10 border border-primary border-opacity-25 shadow-sm">
+                                <p class="mb-0 small text-dark fw-medium"><?= nl2br(htmlspecialchars($comentario['comentario'])) ?></p>
+                                <hr class="my-1 border-primary border-opacity-25">
+                                <small class="text-primary text-opacity-75" style="font-size: 0.7rem;"><i class="fas fa-clock"></i> Registrado el <?= date('d/m/Y H:i', strtotime($comentario['created_at'])) ?></small>
+                            </div>
                         <?php else: ?>
                             <div class="label-coment mb-2"><i class="fas fa-comment-medical text-secondary"></i> Agregar comentario</div>
                             <textarea id="inputComentario" class="form-control form-control-sm mb-2" rows="2" 

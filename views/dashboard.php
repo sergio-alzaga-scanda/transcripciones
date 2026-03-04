@@ -131,6 +131,8 @@ try {
     <title>Dashboard - Métricas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
@@ -376,7 +378,7 @@ try {
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
-                        <table class="table table-hover table-sm align-middle">
+                        <table id="transferenciasTable" class="table table-hover table-sm align-middle" style="width:100%">
                             <thead class="table-light">
                                 <tr><th>#</th><th>Sesión</th><th>Canal</th><th>Proyecto</th><th>Resumen</th><th>Fecha</th></tr>
                             </thead>
@@ -413,7 +415,7 @@ try {
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
-                        <table class="table table-hover table-sm align-middle">
+                        <table id="ticketsTable" class="table table-hover table-sm align-middle" style="width:100%">
                             <thead class="table-light">
                                 <tr><th>#</th><th>No. Ticket</th><th>Proyecto</th><th>Usuario</th><th>ID Sesión</th><th>Fecha</th></tr>
                             </thead>
@@ -463,10 +465,25 @@ try {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="public/js/app.js"></script>
 
     <script>
+        $(document.ready).ready(function() {
+            // Inicializar DataTables
+            $('#ticketsTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+                order: [[ 5, "desc" ]], // Ordenar por fecha
+                pageLength: 10
+            });
+            $('#transferenciasTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+                order: [[ 5, "desc" ]],
+                pageLength: 10
+            });
+        });
         // CHART.JS LOGIC
         const ctx = document.getElementById('dailyChart').getContext('2d');
         let myChart;
