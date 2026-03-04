@@ -46,7 +46,7 @@ class Metrics {
         $msgs = $stmtMsg->fetch(PDO::FETCH_ASSOC);
 
         // Transferencias
-        $whereTransf = $project_id ? " WHERE t.nombre_proyecto = :pid" : "";
+        $whereTransf = $project_id ? " WHERE t.project_id = :pid" : "";
         $stmtTf = $this->conn->prepare("SELECT COUNT(*) as total_transferencias FROM tranferencias t $whereTransf");
         if ($project_id) {
             $stmtTf->execute([':pid' => $project_id]);
@@ -56,7 +56,7 @@ class Metrics {
         $tf = $stmtTf->fetch(PDO::FETCH_ASSOC);
 
         // Tickets
-        $whereTk = $project_id ? " WHERE tk.nombre_proyecto = :pid" : "";
+        $whereTk = $project_id ? " WHERE tk.proyecto = :pid" : "";
         $stmtTk = $this->conn->prepare("SELECT COUNT(*) as total_tickets FROM tickets tk $whereTk");
         if ($project_id) {
             $stmtTk->execute([':pid' => $project_id]);
@@ -117,11 +117,11 @@ class Metrics {
 
     // ---- Transferencias ----
     public function getTransferenciasList($project_id = null) {
-        $where = $project_id ? " WHERE t.nombre_proyecto = :pid " : "";
-        $sql = "SELECT t.*, s.session_id, COALESCE(pc.nombre_proyecto, t.nombre_proyecto) as nombre_proyecto 
+        $where = $project_id ? " WHERE t.project_id = :pid " : "";
+        $sql = "SELECT t.*, s.session_id, COALESCE(pc.nombre_proyecto, t.project_id) as nombre_proyecto 
                 FROM tranferencias t
                 LEFT JOIN sessions s ON t.session_table_id COLLATE utf8mb4_general_ci = s.id COLLATE utf8mb4_general_ci
-                LEFT JOIN projects_config pc ON t.nombre_proyecto COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
+                LEFT JOIN projects_config pc ON t.project_id COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
                 $where
                 ORDER BY t.created_at DESC LIMIT 200";
         $stmt = $this->conn->prepare($sql);
@@ -135,10 +135,10 @@ class Metrics {
 
     // ---- Tickets ----
     public function getTicketsList($project_id = null) {
-        $where = $project_id ? " WHERE tk.nombre_proyecto = :pid " : "";
-        $sql = "SELECT tk.*, COALESCE(pc.nombre_proyecto, tk.nombre_proyecto) as nombre_proyecto 
+        $where = $project_id ? " WHERE tk.proyecto = :pid " : "";
+        $sql = "SELECT tk.*, COALESCE(pc.nombre_proyecto, tk.proyecto) as nombre_proyecto 
                 FROM tickets tk
-                LEFT JOIN projects_config pc ON tk.nombre_proyecto COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
+                LEFT JOIN projects_config pc ON tk.proyecto COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
                 $where
                 ORDER BY tk.created_at DESC LIMIT 200";
         $stmt = $this->conn->prepare($sql);
