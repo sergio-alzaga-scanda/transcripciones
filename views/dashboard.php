@@ -396,8 +396,6 @@ try {
                                         <td><small><?= date('d/m/Y H:i', strtotime($tr['created_at'])) ?></small></td>
                                     </tr>
                                     <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr><td colspan="6" class="text-center text-muted py-3">Sin transferencias registradas</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -433,8 +431,6 @@ try {
                                         <td><small><?= date('d/m/Y H:i', strtotime($tk['created_at'])) ?></small></td>
                                     </tr>
                                     <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr><td colspan="6" class="text-center text-muted py-3">Sin tickets registrados</td></tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
