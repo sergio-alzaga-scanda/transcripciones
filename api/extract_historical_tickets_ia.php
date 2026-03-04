@@ -7,6 +7,10 @@
 header('Content-Type: application/json; charset=utf-8');
 // Evitar timeout de PHP al hacer peticiones lentas iterativas a Azure
 set_time_limit(0); 
+ini_set('max_execution_time', '0');
+ini_set('request_terminate_timeout', '0');
+ini_set('default_socket_timeout', '600');
+ini_set('memory_limit', '-1');
 
 require_once __DIR__ . '/../config/db.php';
 
