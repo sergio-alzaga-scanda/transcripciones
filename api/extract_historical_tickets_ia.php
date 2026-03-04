@@ -51,11 +51,16 @@ try {
                     ORDER BY timestamp DESC
                     LIMIT ?";
     
-    $params = $sessionIds;
-    $params[] = $limit; // Agregar el límite al final
-
     $stmtMessages = $db->prepare($sqlMessages);
-    $stmtMessages->execute($params);
+    
+    // Bindear los IDs de sesión
+    foreach ($sessionIds as $index => $id) {
+        $stmtMessages->bindValue($index + 1, $id, PDO::PARAM_INT);
+    }
+    // Bindear el LIMIT estricto como Entero (esto soluciona el error 1064)
+    $stmtMessages->bindValue(count($sessionIds) + 1, $limit, PDO::PARAM_INT);
+
+    $stmtMessages->execute();
     $mensajesCandidatos = $stmtMessages->fetchAll(PDO::FETCH_ASSOC);
 
     if (empty($mensajesCandidatos)) {
