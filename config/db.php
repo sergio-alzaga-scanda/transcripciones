@@ -6,7 +6,7 @@ class Database {
     // private $db_name = "voiceFlow";
     // private $username = "root";
     // private $password = "";
-    
+    // public $conn;
     // Credenciales Servidor de Producción
     private $host = "localhost";
     private $port = "3306";
