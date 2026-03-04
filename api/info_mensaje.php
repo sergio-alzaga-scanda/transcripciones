@@ -45,6 +45,54 @@ function format_date_with_offset($iso_str) {
     }
 }
 
+/**
+ * Función para extraer número de ticket con Azure OpenAI
+ */
+function extractTicketWithAI($content) {
+    $azure_endpoint = "https://yuscanopenai.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2025-01-01-preview";
+    $azure_api_key = "b5cf6623705b45e1befed28fda1350f7";
+
+    $prompt_base = "Eres un extractor de datos. Tu tarea es encontrar el 'Número de ticket' en el siguiente texto de un chat. 
+Es probable que el número tenga espacios entre los números (ej. '6 2 3 1'). 
+Debes juntar los números eliminando los espacios para formar el ticket original (ej. '6231').
+Vamós a responder estrictamente en formato JSON válido con una propiedad 'ticket'. 
+Si no encuentras ningún número de ticket claro, devuelve null.
+Ejemplo: {\"ticket\": \"623111\"}";
+
+    $data = [
+        "messages" => [
+            ["role" => "system", "content" => $prompt_base],
+            ["role" => "user", "content" => $content]
+        ],
+        "temperature" => 0.0,
+        "response_format" => ["type" => "json_object"]
+    ];
+
+    $ch = curl_init($azure_endpoint);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Content-Type: application/json",
+        "api-key: $azure_api_key"
+    ]);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($http_code == 200 && $response) {
+        $json = json_decode($response, true);
+        $bot_reply = $json['choices'][0]['message']['content'] ?? '{}';
+        $parsed = json_decode($bot_reply, true);
+        if (isset($parsed['ticket']) && !empty($parsed['ticket'])) {
+            return trim((string)$parsed['ticket']);
+        }
+    }
+    return null;
+}
+
 try {
     // 3. Gestionar Configuración del Proyecto
     $stmt = $db->prepare("SELECT project_id, nombre_proyecto FROM projects_config WHERE project_id = ?");
@@ -140,6 +188,11 @@ try {
         }
 
         // --- PROCESAR MENSAJES ---
+        // Checamos si esta sesión ya tiene un ticket para no gastar API de IA en cada sincronización
+        $checkTicket = $db->prepare("SELECT id FROM tickets WHERE id_sesion = ? LIMIT 1");
+        $checkTicket->execute([$vf_id]);
+        $hasTicket = $checkTicket->fetch() ? true : false;
+
         // Limpiamos mensajes para evitar duplicados y volvemos a insertar el historial completo
         // IMPORTANTE: Los mensajes con role='tranferencia' NO se eliminan (son registros manuales)
         $del_msg = $db->prepare("DELETE FROM messages WHERE session_table_id = ? AND role != 'tranferencia'");
@@ -155,6 +208,22 @@ try {
                 $m['content'],
                 format_date_with_offset($m['time'])
             ]);
+
+            // Extracción de Ticket por IA (Tiempo Real)
+            // Solo procesamos si no tiene ticket, si el rol es assistant y si contiene la palabra 'ticket'
+            if (!$hasTicket && $m['role'] === 'assistant' && stripos($m['content'], 'ticket') !== false) {
+                $ext_tk = extractTicketWithAI($m['content']);
+                if ($ext_tk) {
+                    // Evitar duplicar el MISMO número de ticket en la tabla global
+                    $chkGlobal = $db->prepare("SELECT id FROM tickets WHERE numero_ticket = ?");
+                    $chkGlobal->execute([$ext_tk]);
+                    if (!$chkGlobal->fetch()) {
+                        $insTk = $db->prepare("INSERT INTO tickets (numero_ticket, proyecto, usuario, id_sesion, created_at) VALUES (?, ?, 'Generado_IA_Realtime', ?, NOW())");
+                        $insTk->execute([$ext_tk, $project_id, $vf_id]);
+                        $hasTicket = true; // Ya encontramos uno, dejamos de mandar a la IA por esta sesión
+                    }
+                }
+            }
         }
     }
 
