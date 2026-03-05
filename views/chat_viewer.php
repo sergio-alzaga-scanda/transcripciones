@@ -405,7 +405,7 @@
         <?php endif; ?>
 
         // --- Auto-refresh del listado (cada 120 segundos) ---
-        let countdown = 120;
+        let countdown = 15;
         const countdownEl = document.getElementById('countdownVal');
         const refreshIconEl = document.getElementById('refreshIcon');
 
