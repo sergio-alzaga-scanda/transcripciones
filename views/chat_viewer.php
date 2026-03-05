@@ -136,7 +136,7 @@
                     <!-- Indicador de auto-refresh -->
                     <div class="d-flex justify-content-between align-items-center mt-2">
                         <small class="text-muted fst-italic"><i class="fas fa-sync-alt fa-spin" id="refreshIcon" style="display:none"></i> 
-                            <span id="refreshCountdown">Actualiza en <b id="countdownVal">120</b>s</span>
+                            <span id="refreshCountdown">Actualiza en <b id="countdownVal">15</b>s</span>
                         </small>
                         <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="refreshSidebar()" title="Actualizar ahora">
                             <i class="fas fa-sync-alt" style="font-size:0.75rem"></i>
@@ -424,7 +424,7 @@
                     if (newList) {
                         document.getElementById('sessionList').innerHTML = newList.innerHTML;
                     }
-                    countdown = 120;
+                    countdown = 15;
                     refreshIconEl.style.display = 'none';
                 })
                 .catch(() => { refreshIconEl.style.display = 'none'; });
@@ -434,7 +434,7 @@
             countdown--;
             if (countdownEl) countdownEl.textContent = countdown;
             if (countdown <= 0) {
-                countdown = 120;
+                countdown = 15;
                 refreshSidebar();
             }
         }, 1000);
