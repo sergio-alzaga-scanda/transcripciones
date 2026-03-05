@@ -88,7 +88,7 @@ class MainController {
         $users = $this->metricsModel->getUsersList($projectId);
         foreach($users as &$u) {
             if (!empty($u['last_seen'])) {
-                $u['last_seen'] = date('Y-m-d H:i:s', strtotime($u['last_seen']));
+                $u['last_seen'] = date('Y-m-d H:i:s', strtotime($u['last_seen'] . " -6 hours"));
             }
         }
         unset($u);
