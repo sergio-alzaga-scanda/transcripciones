@@ -165,8 +165,8 @@
                             $firstMsg = reset($messages);
                             $lastMsg = end($messages);
 
-                            $tsStart = strtotime($firstMsg['timestamp']);
-                            $tsEnd = strtotime($lastMsg['timestamp']);
+                            $tsStart = strtotime($firstMsg['timestamp'] . " -6 hours");
+                            $tsEnd = strtotime($lastMsg['timestamp'] . " -6 hours");
                             
                             $totalSeconds = $tsEnd - $tsStart;
                             if ($totalSeconds < 0) $totalSeconds = 0;
@@ -323,7 +323,7 @@
                                 
                                 <?= nl2br(htmlspecialchars($msg['content'])) ?>
                                 
-                                <span class="msg-time"><?= date("H:i:s") ?></span>
+                                <span class="msg-time"><?= date("H:i:s", strtotime($msg['timestamp'] . " -6 hours")) ?></span>
                             </div>
                         <?php endforeach; ?>
                         
@@ -337,7 +337,7 @@
                             <div class="p-2 rounded bg-success bg-opacity-10 border border-success border-opacity-25 shadow-sm">
                                 <p class="mb-0 small text-dark fw-medium"><?= nl2br(htmlspecialchars($comentario['comentario'])) ?></p>
                                 <hr class="my-1 border-success border-opacity-25">
-                                <small class="text-success text-opacity-75" style="font-size: 0.7rem;"><i class="fas fa-clock"></i> Registrado el <?= date('d/m/Y H:i', strtotime($comentario['created_at'])) ?></small>
+                                <small class="text-success text-opacity-75" style="font-size: 0.7rem;"><i class="fas fa-clock"></i> Registrado el <?= date('d/m/Y H:i', strtotime($comentario['created_at'] . " -6 hours")) ?></small>
                             </div>
                         <?php else: ?>
                             <div class="label-coment mb-2"><i class="fas fa-comment-medical text-secondary"></i> Agregar comentario</div>

@@ -242,7 +242,7 @@ try {
                                 <td>
                                     <small class="text-muted">
                                         <i class="far fa-clock"></i> 
-                                        <?= $pc['last_sync'] ? date("d/m/Y H:i", strtotime($pc['last_sync'] . " -0 hours")) : 'Sin sincronizar' ?>
+                                        <?= $pc['last_sync'] ? date("d/m/Y H:i", strtotime($pc['last_sync'] . " -6 hours")) : 'Sin sincronizar' ?>
                                     </small>
                                 </td>
                                 <td class="text-center">
@@ -393,7 +393,7 @@ try {
                                         <td><span class="badge bg-warning text-dark"><?= htmlspecialchars($tr['canal'] ?? 'N/A') ?></span></td>
                                         <td><small><?= htmlspecialchars($tr['nombre_proyecto'] ?? '') ?></small></td>
                                         <td><small class="text-truncate d-block" style="max-width:250px"><?= htmlspecialchars($tr['resumen'] ?? '') ?></small></td>
-                                        <td><small><?= date('d/m/Y H:i', strtotime($tr['created_at'])) ?></small></td>
+                                        <td><small><?= date('d/m/Y H:i', strtotime($tr['created_at'] . " -6 hours")) ?></small></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -428,7 +428,7 @@ try {
                                         <td><small><?= htmlspecialchars($tk['nombre_proyecto'] ?? '') ?></small></td>
                                         <td><small><?= htmlspecialchars($tk['usuario'] ?? '') ?></small></td>
                                         <td><small class="text-muted"><?= htmlspecialchars($tk['id_sesion'] ?? '') ?></small></td>
-                                        <td><small><?= date('d/m/Y H:i', strtotime($tk['created_at'])) ?></small></td>
+                                        <td><small><?= date('d/m/Y H:i', strtotime($tk['created_at'] . " -6 hours")) ?></small></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
