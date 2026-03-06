@@ -32,14 +32,14 @@ class Conversation {
 
         $sql = "SELECT 
                     s.*,
-                    (SELECT COUNT(*) FROM messages m WHERE m.session_table_id = s.id) as msg_count,
+                    (SELECT COUNT(*) FROM messages m WHERE m.session_table_id COLLATE utf8mb4_general_ci = s.session_id COLLATE utf8mb4_general_ci) as msg_count,
                     (SELECT COUNT(*) FROM messages m2 
-                     WHERE m2.session_table_id = s.id 
+                     WHERE m2.session_table_id COLLATE utf8mb4_general_ci = s.session_id COLLATE utf8mb4_general_ci
                        AND m2.role = 'tranferencia'
                        AND m2.timestamp >= DATE_SUB(NOW(), INTERVAL 10 MINUTE)
                     ) as is_transferencia_activa,
                     (SELECT COUNT(*) FROM messages m3
-                     WHERE m3.session_table_id = s.id
+                     WHERE m3.session_table_id COLLATE utf8mb4_general_ci = s.session_id COLLATE utf8mb4_general_ci
                        AND m3.role = 'tranferencia'
                     ) as tiene_transferencia,
                     (SELECT COUNT(*) FROM tickets t
@@ -85,7 +85,9 @@ class Conversation {
     }
 
     public function getMessages($session_id) {
-        $sql = "SELECT * FROM messages WHERE session_table_id = :sid ORDER BY timestamp ASC";
+        $sql = "SELECT m.* FROM messages m 
+                INNER JOIN sessions s ON s.session_id COLLATE utf8mb4_general_ci = m.session_table_id COLLATE utf8mb4_general_ci 
+                WHERE s.id = :sid ORDER BY m.timestamp ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':sid', $session_id);
         $stmt->execute();
@@ -93,7 +95,9 @@ class Conversation {
     }
 
     public function getComentario($session_id) {
-        $sql = "SELECT comentario, created_at FROM comentarios_conversacion WHERE session_table_id = :sid LIMIT 1";
+        $sql = "SELECT c.comentario, c.created_at FROM comentarios_conversacion c 
+                INNER JOIN sessions s ON s.session_id COLLATE utf8mb4_general_ci = c.session_table_id COLLATE utf8mb4_general_ci 
+                WHERE s.id = :sid LIMIT 1";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':sid', $session_id);
         $stmt->execute();

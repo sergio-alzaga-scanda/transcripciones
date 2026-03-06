@@ -378,7 +378,7 @@
         <?php if ($currentSession && !$comentario): ?>
         document.getElementById('btnGuardarComentario')?.addEventListener('click', function() {
             const comentario = document.getElementById('inputComentario').value.trim();
-            const sessionId  = '<?= htmlspecialchars($currentSession['id']) ?>';
+            const sessionId  = '<?= htmlspecialchars($currentSession['session_id']) ?>';
             const msgEl      = document.getElementById('comentarioMsg');
 
             if (!comentario) { msgEl.textContent = 'El comentario no puede estar vacío.'; msgEl.className = 'ms-2 small text-danger'; return; }

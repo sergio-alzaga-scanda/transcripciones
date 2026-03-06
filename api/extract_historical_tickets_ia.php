@@ -43,10 +43,6 @@ try {
     }
 
     $sessionIds = array_column($sessions, 'id');
-    $sessionMap = [];
-    foreach ($sessions as $s) {
-        $sessionMap[$s['id']] = $s['session_id'];
-    }
 
     // 2. Buscar mensajes candidatos (role = assistant y contiene la palabra 'ticket')
     $inQuery = implode(',', array_fill(0, count($sessionIds), '?'));
@@ -131,8 +127,6 @@ Ejemplo: {\"ticket\": \"623111\"}";
                 
                 if (!$stmtCheck->fetch()) {
                     // No existe, insertar
-                    $real_session_id = $sessionMap[$msg['session_table_id']] ?? '';
-                    
                     $sqlInsert = "INSERT INTO tickets (numero_ticket, proyecto, usuario, id_sesion, created_at)
                                   VALUES (:numero_ticket, :proyecto, :usuario, :id_sesion, NOW())";
                     $stmtInsert = $db->prepare($sqlInsert);
@@ -140,7 +134,7 @@ Ejemplo: {\"ticket\": \"623111\"}";
                         ':numero_ticket' => $numero_ticket,
                         ':proyecto' => $project_id,
                         ':usuario' => 'Generado_IA_Historico',
-                        ':id_sesion' => $real_session_id
+                        ':id_sesion' => $msg['session_table_id']
                     ]);
                     $resultados['tickets_insertados']++;
                 } else {
