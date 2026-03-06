@@ -142,7 +142,7 @@ def sync_voiceflow_data():
             # INSERTAR MENSAJES (Usando fecha -6h)
             for m in history:
                 cursor.execute("INSERT INTO messages (session_table_id, role, content, timestamp) VALUES (%s, %s, %s, %s)", 
-                              (meta.get('sessionID'), m.get('role'), m.get('content'), format_date_with_offset(m.get('time'))))
+                              (meta.get('id'), m.get('role'), m.get('content'), format_date_with_offset(m.get('time'))))
 
         # Actualizar fecha de sincronización
         cursor.execute("UPDATE projects_config SET last_sync = NOW() WHERE project_id = %s", (project_id,))

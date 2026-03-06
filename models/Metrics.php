@@ -41,7 +41,7 @@ class Metrics {
                             SUM(CASE WHEN m.role = 'user' THEN 1 ELSE 0 END) as msg_user,
                             SUM(CASE WHEN m.role = 'assistant' THEN 1 ELSE 0 END) as msg_agent
                         FROM messages m 
-                        INNER JOIN sessions s ON m.session_table_id COLLATE utf8mb4_general_ci = s.session_id COLLATE utf8mb4_general_ci 
+                        INNER JOIN sessions s ON m.session_table_id COLLATE utf8mb4_general_ci = s.id COLLATE utf8mb4_general_ci 
                         WHERE 1=1 $where";
 
         $stmtMsg = $this->conn->prepare($sqlMessages);
@@ -78,7 +78,7 @@ class Metrics {
         $where = $project_id ? " AND s.project_id COLLATE utf8mb4_general_ci = :pid COLLATE utf8mb4_general_ci " : "";
         $sql = "SELECT DATE(m.timestamp) as fecha, COUNT(m.id) as total 
                 FROM messages m
-                INNER JOIN sessions s ON m.session_table_id COLLATE utf8mb4_general_ci = s.session_id COLLATE utf8mb4_general_ci
+                INNER JOIN sessions s ON m.session_table_id COLLATE utf8mb4_general_ci = s.id COLLATE utf8mb4_general_ci
                 WHERE 1=1 $where
                 GROUP BY DATE(m.timestamp) ORDER BY total DESC LIMIT 3";
         $stmt = $this->conn->prepare($sql);
@@ -91,7 +91,7 @@ class Metrics {
         $where = $project_id ? " AND s.project_id COLLATE utf8mb4_general_ci = :pid COLLATE utf8mb4_general_ci " : "";
         $sql = "SELECT s.id, s.session_id, s.created_at, COUNT(m.id) as msg_count 
                 FROM sessions s
-                LEFT JOIN messages m ON s.session_id COLLATE utf8mb4_general_ci = m.session_table_id COLLATE utf8mb4_general_ci
+                LEFT JOIN messages m ON s.id COLLATE utf8mb4_general_ci = m.session_table_id COLLATE utf8mb4_general_ci
                 WHERE 1=1 $where
                 GROUP BY s.id ORDER BY msg_count DESC LIMIT 3";
         $stmt = $this->conn->prepare($sql);
@@ -126,7 +126,7 @@ class Metrics {
         $where = $project_id ? " WHERE t.project_id COLLATE utf8mb4_general_ci = :pid COLLATE utf8mb4_general_ci " : "";
         $sql = "SELECT t.*, s.session_id, COALESCE(pc.nombre_proyecto, t.project_id) as nombre_proyecto 
                 FROM tranferencias t
-                LEFT JOIN sessions s ON t.session_table_id COLLATE utf8mb4_general_ci = s.session_id COLLATE utf8mb4_general_ci
+                LEFT JOIN sessions s ON t.session_table_id COLLATE utf8mb4_general_ci = s.id COLLATE utf8mb4_general_ci
                 LEFT JOIN projects_config pc ON t.project_id COLLATE utf8mb4_general_ci = pc.project_id COLLATE utf8mb4_general_ci
                 $where
                 ORDER BY t.created_at DESC LIMIT 200";

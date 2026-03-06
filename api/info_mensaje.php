@@ -187,25 +187,22 @@ try {
             $c_upd++;
         }
 
-        // --- PROCESAR MENSAJES ---
         // Checamos si esta sesión ya tiene un ticket para no gastar API de IA en cada sincronización
         $checkTicket = $db->prepare("SELECT id FROM tickets WHERE id_sesion = ? LIMIT 1");
-        $checkTicket->execute([$meta['sessionID'] ?? $vf_id]);
+        $checkTicket->execute([$vf_id]);
         $hasTicket = $checkTicket->fetch() ? true : false;
-
-        $session_id_str = $meta['sessionID'] ?? $vf_id;
 
         // Limpiamos mensajes para evitar duplicados y volvemos a insertar el historial completo
         // IMPORTANTE: Los mensajes con role='tranferencia' NO se eliminan (son registros manuales)
         $del_msg = $db->prepare("DELETE FROM messages WHERE session_table_id = ? AND role != 'tranferencia'");
-        $del_msg->execute([$session_id_str]);
+        $del_msg->execute([$vf_id]);
 
         $sql_msg = "INSERT INTO messages (session_table_id, role, content, timestamp) VALUES (?, ?, ?, ?)";
         $stmt_msg = $db->prepare($sql_msg);
 
         foreach ($history as $m) {
             $stmt_msg->execute([
-                $session_id_str,
+                $vf_id,
                 $m['role'],
                 $m['content'],
                 format_date_with_offset($m['time'])
@@ -221,7 +218,7 @@ try {
                     $chkGlobal->execute([$ext_tk]);
                     if (!$chkGlobal->fetch()) {
                         $insTk = $db->prepare("INSERT INTO tickets (numero_ticket, proyecto, usuario, id_sesion, created_at) VALUES (?, ?, 'Generado_IA_Realtime', ?, NOW())");
-                        $insTk->execute([$ext_tk, $project_id, $session_id_str]);
+                        $insTk->execute([$ext_tk, $project_id, $vf_id]);
                         $hasTicket = true; // Ya encontramos uno, dejamos de mandar a la IA por esta sesión
                     }
                 }
