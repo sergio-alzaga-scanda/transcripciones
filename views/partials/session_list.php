@@ -14,7 +14,7 @@
             $isTransfAct = ($s['is_transferencia_activa'] ?? 0) > 0;
             $tieneTransf = ($s['tiene_transferencia']     ?? 0) > 0;
             $tieneTicket = ($s['tiene_ticket']            ?? 0) > 0;
-            $date = date("d/m H:i", strtotime($s['created_at']));
+            $date = date("d/m H:i", strtotime($s['created_at'] . ' -6 hours'));
             
             $url = "index.php?page=chat&session_id={$s['id']}&search=" . urlencode($search ?? '') . "&sort={$sort}&date={$dateFilter}";
             if (isset($_GET['project_id'])) {

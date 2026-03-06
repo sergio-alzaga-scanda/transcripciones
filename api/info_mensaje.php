@@ -77,6 +77,9 @@ Ejemplo: {\"ticket\": \"623111\"}";
         "api-key: $azure_api_key"
     ]);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    // Evitar problemas de certificado SSL en WAMP/Localhost
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
     $response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
