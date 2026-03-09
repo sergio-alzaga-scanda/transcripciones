@@ -372,6 +372,18 @@
 
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             tooltipTriggerList.map(function(el){ return new bootstrap.Tooltip(el); });
+
+            // Restaurar y mantener el scroll del sidebar
+            const sidebar = document.querySelector('.sidebar-container');
+            if (sidebar) {
+                const scrollPos = sessionStorage.getItem('sidebarScrollPos');
+                if (scrollPos !== null) {
+                    sidebar.scrollTop = parseInt(scrollPos, 10);
+                }
+                sidebar.addEventListener('scroll', function() {
+                    sessionStorage.setItem('sidebarScrollPos', sidebar.scrollTop);
+                });
+            }
         });
 
         // --- Guardar comentario AJAX ---
