@@ -472,12 +472,12 @@ try {
         $(document.ready).ready(function() {
             // Inicializar DataTables
             $('#ticketsTable').DataTable({
-                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+                language: { url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
                 order: [[ 5, "desc" ]], // Ordenar por fecha
                 pageLength: 10
             });
             $('#transferenciasTable').DataTable({
-                language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
+                language: { url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' },
                 order: [[ 5, "desc" ]],
                 pageLength: 10
             });

@@ -2,6 +2,10 @@
 require_once dirname(__DIR__) . '/config/db.php';
 require_once dirname(__DIR__) . '/config/twilio.php';
 
+// Prevenir Timeout de PHP descargando audios
+set_time_limit(0);
+ini_set('max_execution_time', 0);
+
 $account_sid = TWILIO_ACCOUNT_SID;
 $auth_token = TWILIO_AUTH_TOKEN;
 

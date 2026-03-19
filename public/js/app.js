@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const apiKeyInput = document.getElementById("syncApiKey");
       const nameInput = document.getElementById("syncProjectName");
 
-      const take = takeInput ? takeInput.value : 100;
+      const take = takeInput ? takeInput.value : 50;
       const projectId = projectInput ? projectInput.value : "";
       const apiKey = apiKeyInput ? apiKeyInput.value : "";
       const projectName = nameInput ? nameInput.value : "";
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
 /**
  * Función centralizada que hace la petición y maneja las alertas con SweetAlert2
  */
-function ejecutarSincronizacion(projectId, apiKey, take = 100, projectName = "") {
+function ejecutarSincronizacion(projectId, apiKey, take = 50, projectName = "") {
   // 1. Validaciones
   if (!projectId || !apiKey) {
     Swal.fire({
@@ -127,5 +127,5 @@ function syncProjectManual(id, key, name = "") {
   }
 
   // Lanzar la sincronización directa a la API
-  ejecutarSincronizacion(id, key, 100, name);
+  ejecutarSincronizacion(id, key, 50, name);
 }

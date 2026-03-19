@@ -6,6 +6,10 @@ header("Access-Control-Allow-Origin: *");
 require_once dirname(__DIR__) . '/config/db.php';
 require_once dirname(__DIR__) . '/models/User.php';
 
+// Prevenir Timeout de PHP al procesar múltiples sesiones con IA
+set_time_limit(0);
+ini_set('max_execution_time', 0);
+
 // 1. Inicializar conexión
 $database = new Database();
 $db = $database->getConnection();
