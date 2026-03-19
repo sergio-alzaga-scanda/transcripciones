@@ -255,6 +255,20 @@
                                         </div>
                                     </div>
                                 <?php endif; ?>
+
+                                <?php if (!empty($currentSession['recording_url'])): ?>
+                                    <div class="card border-info bg-light shadow-sm mb-2" style="max-width: 95%;">
+                                        <div class="card-body p-2 d-flex align-items-center gap-3">
+                                            <span class="badge bg-info text-dark" style="min-width: 90px; text-align: center;">
+                                                <i class="fas fa-play-circle"></i> Grabación
+                                            </span>
+                                            <audio controls class="w-100" style="height: 35px; outline: none;">
+                                                <source src="<?= htmlspecialchars($currentSession['recording_url']) ?>" type="audio/mpeg">
+                                                Tu navegador no soporta el elemento de audio.
+                                            </audio>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="d-flex flex-column align-items-end gap-1">

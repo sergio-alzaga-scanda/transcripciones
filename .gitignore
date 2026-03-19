@@ -1,1 +1,7 @@
-config/db.php
+.env
+*.pem
+*.crt
+*.pfx
+*.csr
+config/twilio.php
+public/recordings/

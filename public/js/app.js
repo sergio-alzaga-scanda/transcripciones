@@ -61,23 +61,32 @@ function ejecutarSincronizacion(projectId, apiKey, take = 100, projectName = "")
       return response.json();
     })
     .then((data) => {
-      // 4. Caso de Éxito
       if (data.status === "success" || data.status === "completed") {
         const nuevas = data.metrics?.nuevas_sesiones || 0;
         const total = data.metrics?.total_procesadas || 0;
 
-        // Cambiar alerta de carga a éxito
         Swal.fire({
-          icon: "success",
-          title: "¡Completado!",
-          html: `${data.message}<br><br><b>Nuevas sesiones:</b> ${nuevas}<br><b>Total procesadas:</b> ${total}`,
-          timer: 3000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-        }).then(() => {
-          // Recargamos la página cuando el temporizador termina
-          window.location.reload();
+          title: "Sincronizando Grabaciones...",
+          html: `Descargando audios de Twilio...`,
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
         });
+
+        fetch('api/sync_recordings.php')
+          .then(res => res.json())
+          .catch(e => console.error("Error audios", e))
+          .finally(() => {
+            Swal.fire({
+              icon: "success",
+              title: "¡Completado!",
+              html: `${data.message || 'Sincronización finalizada'}<br><br><b>Nuevas sesiones:</b> ${nuevas}<br><b>Total procesadas:</b> ${total}`,
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false,
+            }).then(() => {
+              window.location.reload();
+            });
+          });
       } else {
         // Falló lógicamente desde el servidor
         throw new Error(
